@@ -1,0 +1,30 @@
+{
+  "name": "mean-web-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "ENV=env_test ./node_modules/mocha/bin/mocha ./tests",
+    "start": "ENV=env_production node app",
+    "starttest": "ENV=env_test node app"
+  },
+  "dependencies": {
+    "bcrypt-as-promised": "^1.1.0",
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "express": "*",
+    "jsonwebtoken": "*",
+    "mongoose": "*",
+    "passport": "*",
+    "passport-jwt": "*",
+    "promise": "*",
+    "superagent": "^3.5.2"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0"
+  }
+}
