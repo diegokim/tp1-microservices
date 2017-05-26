@@ -25,7 +25,13 @@ Una vez que tenemos esto instalado, nos paramos en el directorio raiz y utilizam
 
 Esto instala las dependencias (bibliotecas externas que utiliza el proyecto que estan definidas en el package.json).
 
-Luego para correr el servidor tenemos que correr: 
+## Como correr el servidor y las pruebas
+
+Una de las precondiciones que existen para que funcione el servidor es que el demonio de mongodb este corriendo. Para esto yo utilizo:
+
+> $ sudo mongod
+
+Para correr el servidor:
 
 > $ npm start
 
