@@ -4,27 +4,31 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "ENV=env_test ./node_modules/mocha/bin/mocha ./tests",
+    "eslint": "ENV=env_test eslint ./",
+    "eslint:fix": "ENV=env_test eslint --fix ./",
+    "test": "npm run eslint && npm run test:app",
+    "test:app": "ENV=env_test ./node_modules/mocha/bin/mocha ./tests",
     "start": "ENV=env_production node app",
     "starttest": "ENV=env_test node app"
   },
   "dependencies": {
-    "bcrypt-as-promised": "^1.1.0",
+    "bcrypt-as-promised": "~1.1.0",
     "bcryptjs": "*",
     "body-parser": "*",
     "cors": "*",
+    "eslint": "~3.19.0",
     "express": "*",
     "jsonwebtoken": "*",
     "mongoose": "*",
     "passport": "*",
     "passport-jwt": "*",
     "promise": "*",
-    "superagent": "^3.5.2"
+    "superagent": "~3.5.2"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.3.0"
+    "chai": "~3.5.0",
+    "mocha": "~3.3.0"
   }
 }
