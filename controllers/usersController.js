@@ -1,21 +1,18 @@
+const _ 				  = require('lodash');
 const userService = require('../services/usersService');
 
-module.exports.register = (req) => {
-  const name = req.body.name;
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
+module.exports.register = (req, res) => {
+  const user = _.pick(req.body, ['name', 'username', 'email', 'password'])
 
-  return userService.register(name, username, email, password)
-	  .then((msg) => Promise.resolve({'success': true, 'msg': msg}))
-  	.catch((errMsg) => Promise.reject({'success': false, 'msg': errMsg}));
+  return userService.register(user)
+	  .then((user) => res.status(200).json(user).send())
+  	.catch((err) => res.status(err.status).json(err.message).send());
 };
 
-module.exports.authenticate = (req) => {
-  const username = req.body.username;
-  const password = req.body.password;
+module.exports.authenticate = (req, res) => {
+  const user = _.pick(req.body, ['username', 'password'])
 
-  return userService.authenticate(username, password)
-		.then((token) => Promise.resolve({'success': true, 'token': 'JWT ' + token, 'username': username}))
-		.catch((err) => Promise.reject({'success': false, 'msg': err}));
+  return userService.authenticate(user)
+		.then((token) => res.status(200).json(token).send())
+		.catch((err) => res.status(err.status).json(err.message).send());
 };

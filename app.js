@@ -1,13 +1,16 @@
-const express = require('express');
+const express 	 = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const passport = require('passport');
-const usersRoutes = require('./routes/usersRoutes');
-const database = require('./wrappers/database');
+const cors 			 = require('cors');
+const passport 	 = require('passport');
+const httpError  = require('http-errors');
+
+const statusRoutes = require('./routes/statusRoutes');
+const usersRoutes   = require('./routes/usersRoutes');
+const database 		 = require('./wrappers/database');
 
 const app = express();
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080; // EN GENERAL TODAS LAS VARIABLES DE CONFIGURACION VAN EN UN ARCHIVO CONFIG.JSON
 
 database.connect();
 
@@ -23,17 +26,15 @@ app.use(passport.session());
 
 require('./config/passport')(passport);
 
-//  Index route
-app.get('/', (req, res) => {
-  res.send('Invalid endpoint');
-});
-
 //  User routes
-app.use('/users', usersRoutes);
+app.use(usersRoutes);
+
+//  Status routes
+app.use(statusRoutes);
 
 //  Setting the invalid enpoint message for any other route
 app.get('*', (req, res) => {
-  res.send('Invalid endpoint');
+  res.status(400).send(httpError('Invalid endpoint'));
 });
 
 //  Start server on port

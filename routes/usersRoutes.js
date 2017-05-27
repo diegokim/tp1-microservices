@@ -1,31 +1,21 @@
-const express = require('express');
-const router = express.Router();
 const passport = require('passport');
-const usersController = require('../controllers/usersController');
+const express  = require('express');
+const router 	 = express.Router();
+const userController = require('../controllers/usersController');
 
 //  Register
-router.post('/register', (req, res) => {
-  usersController.register(req)
-  .then((response) => res.json(response))
-  .catch((response) => {
-    res.json(response);
-  });
+router.post('/users/register', (req, res) => {
+  userController.register(req, res);
 });
 
 //  Authenticate
-router.post('/authenticate', (req, res) => {
-  UsersController.authenticate(req)
- 		.then((response) => {
-		  res.json(response);
-  	})
-  	.catch((response) => {
-    	res.json(response);
-  	});
+router.post('/users/authenticate', (req, res) => {
+  userController.authenticate(req, res);
 });
 
 //  Profile
-router.get('/profile', passport.authenticate('jwt', {'session': false}), (req, res) => {
-  res.json({'success': true});
+router.get('/users/profile', passport.authenticate('jwt', {'session': false}), (req, res) => {
+  res.status(200).json({'success': true}); // ???
 });
 
 module.exports = router;
