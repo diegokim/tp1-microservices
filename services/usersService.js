@@ -12,7 +12,6 @@ module.exports.register = ({ name, username, email, password }) => {
 
   return UserRepository.validateNewUser(newUser)
 		.then(() 		 => UserRepository.addUser(newUser))
-		.then((user) => Promise.resolve(user))
 		.catch((err) => Promise.reject({ status: 409, message: 'Failed to register user: ' + err }));
 		// AHORA MANDAMOS 409, PERO TENEMOS QUE IDENTIFICAR EL TIPO DE ERRO QUE OCURRIO CON LA BASE DE DATOS:
 		// https://es.wikipedia.org/wiki/Anexo:C%C3%B3digos_de_estado_HTTP
@@ -21,8 +20,7 @@ module.exports.register = ({ name, username, email, password }) => {
 module.exports.authenticate = ({ username, password }) => Promise.resolve()
 	.then(() 						 => UserRepository.getUserByUsername(username))
   .then((userObtained) => checkPasswordIfUser(userObtained, password))
-  .then((isMatch) 		 => getTokenIf(isMatch, username))
-	.catch((err) 				 => Promise.reject({ status: 401, message: 'Authenticate error: ' + err }))
+  .then((isMatch) 		 => getTokenIf(isMatch, username)) // PORAY ESTAS DOS COSAS LAS DEBERIA HACER LA DB
 ;
 
 /**
@@ -32,10 +30,10 @@ module.exports.authenticate = ({ username, password }) => Promise.resolve()
 const getTokenIf = (isMatch, username) => {
   if (isMatch) {
     const token = jwt.sign({'username': username}, configDB.secret, { 'expiresIn': 60480 });
-    return Promise.resolve(token);
+    return Promise.resolve({ token });
   }
 
-  return Promise.reject('There is not a match');
+  return Promise.reject({ status: 401, message: 'Authenticate error: there is not match' });
 };
 
 /**
@@ -44,7 +42,7 @@ const getTokenIf = (isMatch, username) => {
  */
 const checkPasswordIfUser = (user, password) => {
   if (!user) {
-    return Promise.reject('User not found');
+    return Promise.reject({ status: 404, message: 'User not found' });
   }
 
   return Promise.resolve(UserRepository.comparePassword(password, user.password));

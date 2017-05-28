@@ -70,7 +70,7 @@ module.exports.addUser = function (newUser) {
     .then((hash) => {
       newUser.password = hash
       newUser.save()
-      return resolve()
+      return resolve(newUser);
     })
     .catch((err) => {
       console.log('Error add user:')

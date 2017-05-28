@@ -1,19 +1,9 @@
-const assert = require('chai').assert;
+const assert  = require('chai').assert;
 const request = require('superagent');
-// const server = require('../app.js');
-const DB = require('../wrappers/database');
-
 const baseUrl = 'http://localhost:8080';
 
-
-describe('Integration tests', () => {
+describe('Integration status tests', () => {
 	// Leave the database in a valid state
-  beforeEach((done) => {
-    DB.drop()
-		.then(done)
-		.catch(done);
-  });
-
   describe('Status', () => {
     let response;
     beforeEach(() => (response = request.get(baseUrl + '/ping')

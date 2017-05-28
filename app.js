@@ -2,10 +2,9 @@ const express 	 = require('express');
 const bodyParser = require('body-parser');
 const cors 			 = require('cors');
 const passport 	 = require('passport');
-const httpError  = require('http-errors');
 
 const statusRoutes = require('./routes/statusRoutes');
-const usersRoutes   = require('./routes/usersRoutes');
+const usersRoutes  = require('./routes/usersRoutes');
 const database 		 = require('./wrappers/database');
 
 const app = express();
@@ -34,7 +33,7 @@ app.use(statusRoutes);
 
 //  Setting the invalid enpoint message for any other route
 app.get('*', (req, res) => {
-  res.status(400).send(httpError('Invalid endpoint'));
+  res.status(400).json({ message: 'Invalid endpoint' });
 });
 
 //  Start server on port
