@@ -1,6 +1,6 @@
 const UserRepository = require('../repositories/usersRepository');
-const configDB 			 = require('../config/database');
-const jwt 					 = require('jsonwebtoken');
+const configDB = require('../config/database');
+const jwt = require('jsonwebtoken');
 
 module.exports.register = ({ name, username, email, password }) => {
   const newUser = new UserRepository({	// NEW ?
@@ -29,10 +29,9 @@ module.exports.authenticate = ({ username, password }) => Promise.resolve()
  */
 const getTokenIf = (isMatch, username) => {
   if (isMatch) {
-    const token = jwt.sign({'username': username}, configDB.secret, { 'expiresIn': 60480 });
+    const token = 'JWT ' + jwt.sign({ username }, configDB.secret, { 'expiresIn': 60480 });
     return Promise.resolve({ token });
   }
-
   return Promise.reject({ status: 401, message: 'Authenticate error: there is not match' });
 };
 
@@ -44,6 +43,5 @@ const checkPasswordIfUser = (user, password) => {
   if (!user) {
     return Promise.reject({ status: 404, message: 'User not found' });
   }
-
   return Promise.resolve(UserRepository.comparePassword(password, user.password));
 };

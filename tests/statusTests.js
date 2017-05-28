@@ -1,4 +1,4 @@
-const assert  = require('chai').assert;
+const assert = require('chai').assert;
 const request = require('superagent');
 const baseUrl = 'http://localhost:8080';
 

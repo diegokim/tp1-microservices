@@ -1,11 +1,11 @@
-const express 	 = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
-const cors 			 = require('cors');
-const passport 	 = require('passport');
+const cors = require('cors');
+const passport = require('passport');
 
 const statusRoutes = require('./routes/statusRoutes');
-const usersRoutes  = require('./routes/usersRoutes');
-const database 		 = require('./wrappers/database');
+const usersRoutes = require('./routes/usersRoutes');
+const database = require('./wrappers/database');
 
 const app = express();
 

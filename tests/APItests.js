@@ -1,6 +1,6 @@
-const assert  = require('chai').assert;
+const assert = require('chai').assert;
 const request = require('superagent');
-const DB      = require('../wrappers/database');
+const DB = require('../wrappers/database');
 
 // eslint-disable-next-line
 const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
@@ -8,9 +8,9 @@ const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEV
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
-  const name     = 'diego';
+  const name = 'diego';
   const username = 'diego';
-  const email    = 'diego@gmail.com';
+  const email = 'diego@gmail.com';
   const password = 'kim';
   const user = {
     username,

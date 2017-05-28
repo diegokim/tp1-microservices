@@ -1,8 +1,8 @@
-const passport  = require('passport');
-const express   = require('express');
-const router 	  = express.Router();
+const passport = require('passport');
+const express = require('express');
+const router = express.Router();
 const userController = require('../controllers/usersController');
-const userValidator  = require('../validators/userValidator');
+const userValidator = require('../validators/userValidator');
 
 //  Register
 router.post('/users/register', (req, res) => {

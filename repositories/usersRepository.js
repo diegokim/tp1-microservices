@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt-as-promised')
-//  const configDB = require('../config/database')
 const Promise = require('promise')
 
 //  User Schema

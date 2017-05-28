@@ -6,7 +6,7 @@ module.exports.register = (req, res) => {
 
   return userService.register(user)
 	  .then((createdUser) => res.status(201).json(createdUser))
-  	.catch((err)  => res.status(err.status).json(err.message));
+  	.catch((err) => res.status(err.status).json(err.message));
 };
 
 module.exports.authenticate = (req, res) => {
@@ -14,5 +14,5 @@ module.exports.authenticate = (req, res) => {
 
   return userService.authenticate(user)
 		.then((token) => res.status(200).json(token))
-		.catch((err)  => res.status(err.status).json(err.message));
+		.catch((err) => res.status(err.status).json(err.message));
 };
