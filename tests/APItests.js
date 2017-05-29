@@ -34,7 +34,7 @@ describe('Integration tests', () => {
     it('POST to /users/register with a correct user', () => registerRequest(newUser)
       .then((res) => {
         assert.equal(res.status, 201);
-        assert.deepEqual(res.body, newUser);
+        assert.include(res.body, newUser);
       }));
   });
 

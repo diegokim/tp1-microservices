@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-as-promised')
-const Promise = require('promise')
+const bcrypt   = require('bcrypt-as-promised')
+const Promise  = require('promise')
+const _ 			 = require('lodash');
 
 //  User Schema
 const UserSchema = mongoose.Schema({
@@ -24,32 +25,15 @@ const UserSchema = mongoose.Schema({
 // eslint-disable-next-line
 const User = module.exports = mongoose.model('User', UserSchema)
 
-module.exports.getUserById = function (id) {
-  return User.findById(id)
+module.exports.validateNewUser = function (user) {
+  return User.getUserByUsername(user.username)
+    .then(validateUserNotExists)
+    .then(User.getUserByEmail(user.email))
+    .then(validateUserNotExists);
 }
 
-module.exports.validateNewUser = function (user) {
-  return new Promise((resolve, reject) => {
-    User.getUserByUsername(user.username)
-    .then((user) => {
-      if (user) {
-        return reject('username already in use')
-      }
-      return resolve()
-    })
-    .then(() => User.getUserByEmail(user.email))
-    .then((user) => {
-      if (user) {
-        return reject('email already in use')
-      }
-      return resolve()
-    })
-    .catch((err) => {
-      console.log('validateNewUser error:')
-      console.log(err)
-      reject(err)
-    })
-  })
+module.exports.getUserById = function (id) {
+  return User.findById(id)
 }
 
 module.exports.getUserByEmail = function (email) {
@@ -63,21 +47,24 @@ module.exports.getUserByUsername = function (username) {
 }
 
 module.exports.addUser = function (newUser) {
-  return new Promise((resolve, reject) => {
-    bcrypt.genSalt(10)
+  return bcrypt.genSalt(10)
     .then((salt) => bcrypt.hash(newUser.password, salt))
     .then((hash) => {
-      newUser.password = hash
-      newUser.save()
-      return resolve(newUser);
+      const createdUser = _.pick(newUser, ['id', 'name', 'username', 'email', 'password']);
+      newUser.password = hash;
+      newUser.save();
+
+      return createdUser;
     })
-    .catch((err) => {
-      console.log('Error add user:')
-      reject(err)
-    })
-  })
 }
 
 module.exports.comparePassword = function (candidatePassword, hash) {
   return bcrypt.compare(candidatePassword, hash)
+}
+
+const validateUserNotExists = (user) => {
+  if (user) {
+    return Promise.reject('User exists');
+  }
+  return Promise.resolve();
 }
