@@ -1,4 +1,4 @@
-const _ 				  = require('lodash');
+const _ = require('lodash');
 const userService = require('../services/usersService');
 
 module.exports.register = (req, res) => {

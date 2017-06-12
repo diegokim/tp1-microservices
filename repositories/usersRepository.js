@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-const bcrypt   = require('bcrypt-as-promised')
-const Promise  = require('promise')
-const _ 			 = require('lodash');
+const bcrypt = require('bcrypt-as-promised')
+const Promise = require('promise')
+const _ = require('lodash');
 
 //  User Schema
 const UserSchema = mongoose.Schema({

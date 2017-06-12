@@ -157,7 +157,7 @@ module.exports = {
         "no-mixed-requires": "error",
         "no-mixed-spaces-and-tabs": "off",
         "no-multi-assign": "error",
-        "no-multi-spaces": "off",
+        "no-multi-spaces": "error",
         "no-multi-str": "error",
         "no-multiple-empty-lines": "error",
         "no-native-reassign": "error",
