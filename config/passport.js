@@ -4,20 +4,20 @@ const User = require('../repositories/usersRepository')
 const configDB = require('./database')
 
 module.exports = function (passport) {
-  let opts = {}
-  opts.jwtFromRequest = ExtractJwt.fromAuthHeader()
-  opts.secretOrKey = configDB.secret
+  const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeader(),
+    secretOrKey:    configDB.secret
+  }
+
   passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
     User.getUserByUsername(jwtPayload.username)
-    .then(user => {
+    .then((user) => {
       if (user) {
         return done(null, user)
       } else {
         return done()
       }
     })
-    .catch(err => {
-      return done(err, false)
-    })
+    .catch((err) => done(err, false))
   }))
 }

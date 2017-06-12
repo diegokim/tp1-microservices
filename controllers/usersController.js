@@ -1,19 +1,18 @@
-const userService = require('../services/usersService')
+const _ = require('lodash');
+const userService = require('../services/usersService');
 
-module.exports.register = (req) => {
-  const name = req.body.name
-  const username = req.body.username
-  const email = req.body.email
-  const password = req.body.password
-  return userService.register(name, username, email, password)
-  .then(msg => { return Promise.resolve({success: true, msg: msg}) })
-  .catch(errMsg => { return Promise.reject({success: false, msg: errMsg}) })
-}
+module.exports.register = (req, res) => {
+  const user = _.pick(req.body, ['name', 'username', 'email', 'password'])
 
-module.exports.authenticate = (req) => {
-  const username = req.body.username
-  const password = req.body.password
-  return userService.authenticate(username, password)
-  .then(token => { return Promise.resolve({success: true, token: 'JWT ' + token, username: username}) })
-  .catch(err => { return Promise.reject({success: false, msg: err}) })
-}
+  return userService.register(user)
+	  .then((createdUser) => res.status(201).json(createdUser))
+  	.catch((err) => res.status(err.status).json(err.message));
+};
+
+module.exports.authenticate = (req, res) => {
+  const user = _.pick(req.body, ['username', 'password'])
+
+  return userService.authenticate(user)
+		.then((token) => res.status(200).json(token))
+		.catch((err) => res.status(err.status).json(err.message));
+};

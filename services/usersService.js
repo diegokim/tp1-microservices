@@ -1,45 +1,44 @@
-const UserRepository = require('../repositories/usersRepository')
-const configDB = require('../config/database')
-const jwt = require('jsonwebtoken')
+const UserRepository = require('../repositories/usersRepository');
+const configDB = require('../config/database');
+const jwt = require('jsonwebtoken');
 
-module.exports.register = (name, username, email, password) => {
-  let newUser = new UserRepository({
-    name: name,
-    email: email,
-    username: username,
-    password: password
-  })
+module.exports.register = ({ name, username, email, password }) => {
+  const newUser = new UserRepository({	// NEW ?
+    name,
+    email,
+    username,
+    password
+  });
+
   return UserRepository.validateNewUser(newUser)
-  .then(res => { return UserRepository.addUser(newUser) })
-  .then(user => { return Promise.resolve('User registered') })
-  .catch(err => { return Promise.reject('Failed to register user: ' + err) })
-}
+		.then(() 		 => UserRepository.addUser(newUser))
+  	.catch((err) => Promise.reject({ status: 409, message: err }));
+};
 
-module.exports.authenticate = (username, password) => {
-  return UserRepository.getUserByUsername(username)
-  .then(userObtained => { return checkPasswordIfUser(userObtained, password) })
-  .then(isMatch => { return getTokenIf(isMatch, username) })
-  .then(token => { return Promise.resolve(token) })
-  .catch(err => { return Promise.reject('Authenticate error' + err) })
-}
+module.exports.authenticate = ({ username, password }) => Promise.resolve()
+	.then(() 						 => UserRepository.getUserByUsername(username))
+  .then((userObtained) => checkPassword(userObtained, password))
+  .then(() 		         => getToken(username))
+;
 
-/*  Returns a promise with the token if the isMatch boolean is true
-*/
-const getTokenIf = function (isMatch, username) {
-  if (isMatch) {
-    const token = jwt.sign({username: username}, configDB.secret, {
-      expiresIn: 604800
-    })
-    return Promise.resolve(token)
-  }
-  return Promise.reject('There is not a match')
-}
+/**
+ * Returns a promise with the token if the isMatch boolean is true
+ *
+ */
+const getToken = (username) => {
+  const token = 'JWT ' + jwt.sign({ username }, configDB.secret, { 'expiresIn': 60480 });
+  return Promise.resolve({ token });
+};
 
-/*  Returns a promise with a boolean that tells if the passwords match
-*/
-const checkPasswordIfUser = function (user, password) {
+/**
+ * Returns a promise with a boolean that tells if the passwords match
+ *
+ */
+const checkPassword = (user, password) => {
   if (!user) {
-    return Promise.reject('User not found')
+    return Promise.reject({ status: 404, message: 'User not found' });
+  } else if (!UserRepository.comparePassword(password, user.password)) {
+    return Promise.reject({ status: 401, message: 'Authenticate error: invalid password' });
   }
-  return UserRepository.comparePassword(password, user.password)
-}
+  return Promise.resolve();
+};

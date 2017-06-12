@@ -1,25 +1,28 @@
-const express = require('express')
-const router = express.Router()
-const passport = require('passport')
-const usersController = require('../controllers/usersController')
+const passport = require('passport');
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/usersController');
+const userValidator = require('../validators/userValidator');
 
 //  Register
-router.post('/register', (req, res, next) => {
-  usersController.register(req)
-  .then(response => res.json(response))
-  .catch(response => { res.json(response) })
-})
+router.post('/users/register', (req, res) => {
+  if (userValidator.isValidNewUser(req.body)) {
+    return userController.register(req, res);
+  }
+  res.status(400).json({ message: 'Missing params' }); // No deberiamos mandar el error a mano, despues lo hablamos
+});
 
 //  Authenticate
-router.post('/authenticate', (req, res, next) => {
-  usersController.authenticate(req)
-  .then(response => { res.json(response) })
-  .catch(response => { res.json(response) })
-})
+router.post('/users/authenticate', (req, res) => {
+  if (userValidator.isValidUser(req.body)) {
+    return userController.authenticate(req, res);
+  }
+  res.status(400).json({ message: 'Missing params' });
+});
 
 //  Profile
-router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-  res.json({success: true})
-})
+router.get('/users/profile', passport.authenticate('jwt', {'session': false}), (req, res) => {
+  res.status(200).json({'success': true}); // ???
+});
 
-module.exports = router
+module.exports = router;
