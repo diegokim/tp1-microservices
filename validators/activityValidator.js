@@ -1,20 +1,17 @@
-module.exports.isValidActivity = (user) => (
-  user.nombre &&
-  user.descripcion &&
-  user.fechaInicio &&
-  user.horaInicio &&
-  user.fechaFin &&
-  user.horaFin &&
-  user.categorias &&
-  user.prioridad &&
-  user.participantes &&
-  user.recordatorio &&
-  user.periodicidad &&
-  user.estimacion &&
-  user.objetivo &&
-  user.tipo &&
-  user.beneficios &&
-  user.beneficios.precio &&
-  user.beneficios.descuento &&
-  user.beneficios.descripcion
+module.exports.isValidActivity = (activity) => (
+  activity.nombre &&
+  activity.descripcion &&
+  activity.fechaInicio &&
+  activity.horaInicio &&
+  activity.fechaFin &&
+  activity.horaFin &&
+  activity.categorias &&
+  activity.prioridad &&
+  activity.participantes &&
+  activity.recordatorio &&
+  activity.periodicidad &&
+  activity.estimacion &&
+  activity.objetivo &&
+  activity.tipo &&
+  activity.beneficios
 );

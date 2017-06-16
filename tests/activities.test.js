@@ -1,6 +1,7 @@
 const assert = require('chai').assert;
 const request = require('superagent');
 const DB = require('../wrappers/database');
+const _ = require('lodash');
 
 // eslint-disable-next-line
 const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
@@ -9,7 +10,7 @@ const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
   const name = 'diego';
-  const username = 'diego';
+  const username = 'username';
   const email = 'diego@gmail.com';
   const password = 'kim';
   const user = {
@@ -33,13 +34,13 @@ describe('Integration tests', () => {
     prioridad: 'alta',
     participantes: ['diego', 'juanma', 'lautaro', 'hugo'],
     recordatorio: '9/7/2017',
-    periodicidad: 0,
-    estimacion: 0,
+    periodicidad: 1,
+    estimacion: 2,
     objetivo: '5 partidos',
-    tipo: '',
+    tipo: 'act',
     beneficios: [{
-		  precio: 0,
-		  descuento: 0,
+		  precio: 10,
+		  descuento: 10,
 		  descripcion: ''
 	  }]
   }
@@ -51,17 +52,6 @@ describe('Integration tests', () => {
 		.catch(done);
   });
 
-  describe('Create and get activity', () => {
-    let token;
-    it('Create and then get activity should return the same', () => registerRequest(newUser)
-      .then(() => authenticateRequest(user))
-      .then((res) => (token = res.body.token))
-      .then(() => createActivity(activity, token))
-      .then((res) => getActivity(res.body.id, token))
-      .then((activ) => assert.include(activ, activity))
-    );
-  });
-
   describe('Create and get activities', () => {
     let token;
     it('Create and then get activities should contain the created activity', () => registerRequest(newUser)
@@ -69,9 +59,25 @@ describe('Integration tests', () => {
       .then((res) => (token = res.body.token))
       .then(() => createActivity(activity, token))
       .then(() => getActivities(token))
-      .then((activities) => assert.include(activities, activity))
+      .then((res) => {
+        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+        assert.deepEqual(createdActivity, Object.assign(activity, { username }))
+      })
     );
   });
+
+  // describe('Create and get activity', () => {
+  //   let token;
+  //   it('Create and then get activity should return the same', () => registerRequest(newUser)
+  //     .then(() => authenticateRequest(user))
+  //     .then((res) => (token = res.body.token))
+  //     .then(() => createActivity(activity, token))
+  //     .then((res) => getActivity(res.body.id, token))
+  //     .then((activ) => assert.include(activ, activity))
+  //   );
+  // });
 });
 
 //  AUXILIAR FUNCTIONS
@@ -94,15 +100,15 @@ const createActivity = (activity, token) => Promise.resolve(
     .send(activity)
 );
 
-const getActivity = (id, token) => Promise.resolve(
-  request.get(baseUrl + '/activities/' + id)
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send()
-);
-
 const getActivities = (token) => Promise.resolve(
   request.get(baseUrl + '/activities')
     .set({'Authorization': token})
     .send()
 );
+
+// const getActivity = (id, token) => Promise.resolve(
+//   request.get(baseUrl + '/activities/' + id)
+//     .set({'content-type': 'application/json'})
+//     .set({'Authorization': token})
+//     .send()
+// );

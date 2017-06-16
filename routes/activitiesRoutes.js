@@ -11,7 +11,7 @@ router.post('/activities', (req, res) => {
   res.status(400).json({ message: 'Missing params' });
 });
 
-//  Get activity
+//  Get activities
 router.get('/activities', (req, res) => activitiesController.list(req, res));
 
 module.exports = router;

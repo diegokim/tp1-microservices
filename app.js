@@ -5,6 +5,7 @@ const passport = require('passport');
 
 const statusRoutes = require('./routes/statusRoutes');
 const usersRoutes = require('./routes/usersRoutes');
+const activitiesRoutes = require('./routes/activitiesRoutes');
 const database = require('./wrappers/database');
 
 const app = express();
@@ -30,6 +31,9 @@ app.use(usersRoutes);
 
 //  Status routes
 app.use(statusRoutes);
+
+// Activities routes
+app.use(activitiesRoutes);
 
 //  Setting the invalid enpoint message for any other route
 app.get('*', (req, res) => {
