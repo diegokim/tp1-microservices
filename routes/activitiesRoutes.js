@@ -15,4 +15,7 @@ router.post('/activities', passport.authenticate('jwt', {'session': false}), (re
 //  Get activities
 router.get('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.list(req, res));
 
+//  Update an existing activity
+router.put('/activities/:activityId', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.update(req, res));
+
 module.exports = router;

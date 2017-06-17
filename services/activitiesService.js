@@ -11,3 +11,4 @@ module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
 
+module.exports.update = (id, username, activity) => ActivityRepository.update(id, username, activity)

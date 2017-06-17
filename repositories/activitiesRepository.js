@@ -67,3 +67,8 @@ module.exports.getActivitiesByUsername = function (username) {
 module.exports.create = function (activity) {
   return activity.save();
 }
+
+module.exports.update = function (id, username, updatedActivity) {
+  return Activity.findById(id) // Tendria que ver que onda el tema de seguridad
+  .then((activity) => activity.update(updatedActivity));
+}

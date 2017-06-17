@@ -7,7 +7,7 @@ const _ = require('lodash');
 //const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
-
+/*eslint-disable*/
 describe('Integration tests', () => {
   const name = 'diego';
   const username = 'diego123';
@@ -44,6 +44,8 @@ describe('Integration tests', () => {
 		  descripcion: ''
 	  }]
   }
+  const updatedActivity = activity;
+  updatedActivity.descripcion = 'Partidasoo';
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -65,6 +67,29 @@ describe('Integration tests', () => {
           'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
+    );
+  });
+
+  describe('Create and get activities', () => {
+    let token;
+    it('Create and then get activities should contain the created activity', () => {
+      return registerRequest(newUser)
+      .then(() => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(() => createActivity(activity, token))
+      .then(() => getActivities(token))
+      .then((res) => {
+        const id = res.body[0]._id;
+        updateActivity(id, updatedActivity, token);
+      })
+      .then(() => getActivities(token))
+      .then((res) => {
+        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+        assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
+      })
+      }
     );
   });
 
@@ -104,6 +129,13 @@ const getActivities = (token) => Promise.resolve(
   request.get(baseUrl + '/activities')
     .set({'Authorization': token})
     .send()
+);
+
+const updateActivity = (id, activity, token) => Promise.resolve(
+  request.put(baseUrl + '/activities/' + id)
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send(activity)
 );
 
 // const getActivity = (id, token) => Promise.resolve(
