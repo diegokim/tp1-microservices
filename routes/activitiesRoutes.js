@@ -1,10 +1,11 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const activitiesController = require('../controllers/activitiesController');
 const validator = require('../validators/activityValidator');
 
 //  Add activity
-router.post('/activities', (req, res) => {
+router.post('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => {
   if (validator.isValidActivity(req.body)) {
     return activitiesController.create(req, res);
   }
@@ -12,6 +13,6 @@ router.post('/activities', (req, res) => {
 });
 
 //  Get activities
-router.get('/activities', (req, res) => activitiesController.list(req, res));
+router.get('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.list(req, res));
 
 module.exports = router;

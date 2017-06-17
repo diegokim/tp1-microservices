@@ -20,7 +20,7 @@ module.exports.create = (req, res) => {
     'beneficios'
   ])
 
-  const username = 'username' // TENEMOS QUE TENER ALGUNA FUNCION QUE NOS DEVUELVA EL username A PARTIR DEL TOKEN
+  const username = req.user.username
 
   return activitiesService.create({ activity, username })
 	  .then((createdActivity) => res.status(201).json(createdActivity))
@@ -28,8 +28,7 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.list = (req, res) => {
-  const username = 'username' // TENEMOS QUE TENER ALGUNA FUNCION QUE NOS DEVUELVA EL username A PARTIR DEL TOKEN
-
+  const username = req.user.username
   return activitiesService.list({ username })
 		.then((activity) => res.status(200).json(activity))
 		.catch((err) => res.status(err.status).json(err.message));

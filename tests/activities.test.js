@@ -4,13 +4,13 @@ const DB = require('../wrappers/database');
 const _ = require('lodash');
 
 // eslint-disable-next-line
-const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
+//const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
   const name = 'diego';
-  const username = 'username';
+  const username = 'diego123';
   const email = 'diego@gmail.com';
   const password = 'kim';
   const user = {
