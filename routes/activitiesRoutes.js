@@ -15,4 +15,12 @@ router.post('/activities', passport.authenticate('jwt', {'session': false}), (re
 //  Get activities
 router.get('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.list(req, res));
 
+//  Search activities
+router.get('/activities/search', passport.authenticate('jwt', {'session': false}), (req, res) => {
+  if (validator.isValidSearch(req.body)) {
+    return activitiesController.search(req, res);
+  }
+  res.status(400).json({ message: 'Missing params' });
+});
+
 module.exports = router;

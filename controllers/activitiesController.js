@@ -33,3 +33,16 @@ module.exports.list = (req, res) => {
 		.then((activity) => res.status(200).json(activity))
 		.catch((err) => res.status(err.status).json(err.message));
 };
+
+module.exports.search = (req, res) => {
+  const params = _.pick(req.body, [
+    'tipo',
+    'texto',
+    'fechaHasta',
+    'fechaDesde',
+    'categorias'
+  ])
+  return activitiesService.search({ params })
+		.then((activities) => res.status(200).json(activities))
+		.catch((err) => res.status(err.status).json(err.message));
+};

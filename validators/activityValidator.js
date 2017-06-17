@@ -15,3 +15,11 @@ module.exports.isValidActivity = (activity) => (
   activity.tipo &&
   activity.beneficios
 );
+
+module.exports.isValidSearch = (params) => (
+  params.tipo ||
+  params.texto ||
+  params.categorias ||
+  params.fechaDesde ||
+  params.fechaHasta
+);
