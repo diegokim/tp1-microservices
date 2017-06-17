@@ -22,7 +22,7 @@ router.post('/users/authenticate', (req, res) => {
 
 //  Profile
 router.get('/users/profile', passport.authenticate('jwt', {'session': false}), (req, res) => {
-  res.status(200).json({'success': true}); // ???
+  res.status(200).json({'success': true});
 });
 
 module.exports = router;

@@ -26,7 +26,7 @@ module.exports.authenticate = ({ username, password }) => Promise.resolve()
  *
  */
 const getToken = (username) => {
-  const token = 'JWT ' + jwt.sign({ username }, configDB.secret, { 'expiresIn': 60480 });
+  const token = 'JWT ' + jwt.sign({ username }, configDB.secret, { 'expiresIn': 60480 * 100000 });
   return Promise.resolve({ token });
 };
 
