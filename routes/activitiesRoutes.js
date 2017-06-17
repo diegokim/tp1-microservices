@@ -12,6 +12,9 @@ router.post('/activities', passport.authenticate('jwt', {'session': false}), (re
   res.status(400).json({ message: 'Missing params' });
 });
 
+//  Register into activities
+router.put('/activities/:activityId/register', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.register(req, res));
+
 //  Get activities
 router.get('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.list(req, res));
 

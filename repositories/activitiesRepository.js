@@ -64,6 +64,16 @@ module.exports.getActivitiesByUsername = function (username) {
   return Activity.find(query);
 }
 
+module.exports.addUser = function (activityId, username) {
+  const query = { _id: activityId }
+  return Activity.findById(query)
+    .then((activity) => {
+      const newParticipants = activity.participantes;
+      newParticipants.push(username);
+      return activity.update({ participantes: newParticipants });
+    })
+}
+
 module.exports.create = function (activity) {
   return activity.save();
 }

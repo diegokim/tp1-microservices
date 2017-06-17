@@ -1,0 +1,138 @@
+POST /users
+	body: {
+		nombreUsuario: "lucas", 
+    email: "lucas@gmail",
+		sexo: "masculino", // masculino, femenimo
+		tipo: "premium", // free, premium, premiumAPI, premium
+		contraseña: "lucas",
+		nacimiento: "13/08/93"
+	}
+
+	respuesta --> 201 Y 
+	body: {
+		token: "token"
+	}
+
+
+---------------------------------------------
+
+POST /activities // CREAR UNA ACTIVIDAD
+	HEADER: AUTHORIZATION, Bearer + token
+	body: {
+		nombre: "futbol",
+		descripcion: "partido de futbol",
+		fechaInicio: "10/7/2017",
+		horaInicio: "12:00",
+		fechaFin: "10/7/2017",
+		horaFin: "13:00",
+		categorias: ["futbol", "pelota", "racing"],
+		prioridad: "alta",
+		participantes: ["diego", "juanma", "lautaro", "hugo"],
+		recordatorio: "9/7/2017",
+		periodicidad: 0,
+		estimacion: 0,
+		objetivo: "5 partidos",
+		tipo: "",
+		beneficios: [{
+			precio: 0,
+			descuento: 0,
+			descripcion: ""
+		}]
+	}
+
+	respuesta --> 201, con la actividad incluyendo el id de la misma: "_id"
+
+
+---------------------------------------------
+
+GET /activities // OBTENER LISTA DE ACTIVIDADES
+	HEADER: AUTHORIZATION, Bearer + token
+
+	respuesta --> 200 // + LISTA DE ACTIVIDADES
+	body: [{
+		_id: "",
+		username: "",
+		nombre: "",
+		descripcion: "",
+		fechaInicio: "",
+		horaInicio: "",
+		fechaFin: "",
+		horaFin: "",
+		categorias: ["categoria", "categoria"],
+		prioridad: "",
+		participantes: ["username", "username"],
+		recordatorio: "fecha",
+		periodicidad: int,
+		estimacion: int,
+		objetivo: "",
+		tipo: ""
+	}]
+
+
+---------------------------------------------
+
+UPDATE /activities/{id} // EDITAR ACTIVIDAD
+	HEADER: AUTHORIZATION, Bearer + token
+	body: {
+		nombre: "",
+		descripcion: "",
+		fechaInicio: "",
+		horaInicio: "",
+		fechaFin: "",
+		horaFin: "",
+		categorias: ["categoria", "categoria"],
+		prioridad: "",
+		participantes: ["username", "username"],
+		recordatorio: "fecha",
+		periodicidad: int,
+		estimacion: int,
+		objetivo: "",
+		tipo: "",
+		beneficios: [{
+			precio: int,
+			descuento: int,
+			descripcions
+		}]
+	}
+
+	respuesta --> 204
+
+
+---------------------------------------------
+
+PUT /activities/{id}/register // ELEGIR EN ACTIVIDAD
+	HEADER: AUTHORIZATION, Bearer + token
+
+	respuesta --> 204
+
+---------------------------------------------
+
+GET /activities/search // BUSCAR ACTIVIDAD
+	HEADER: AUTHORIZATION, Bearer + token
+	body: {
+		tipo: "normal", // random, normal
+		texto: "futbol",
+		categorias: ["futbol", "racing"],
+		fechaDesde: "10/7/2018",
+		fechaHasta: "11/7/2018"
+	}
+
+	respuesta --> 200 // + LISTA DE ACTIVIDADES
+	body: [{
+		_id: "",
+		username: "",
+		nombre: "",
+		descripcion: "",
+		fechaInicio: "",
+		horaInicio: "",
+		fechaFin: "",
+		horaFin: "",
+		categorias: ["categoria", "categoria"],
+		prioridad: "",
+		participantes: ["username", "username"],
+		recordatorio: "fecha",
+		periodicidad: int,
+		estimacion: int,
+		objetivo: "",
+		tipo: ""
+	}]
