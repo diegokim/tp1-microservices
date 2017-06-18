@@ -9,17 +9,29 @@ const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 describe('Integration tests', () => {
   const name = 'diego';
   const username = 'diego123';
+  const username2 = 'lucas123';
   const email = 'diego@gmail.com';
   const password = 'kim';
+  const password2 = 'ludueno';
   const user = {
     username,
     password
+  };
+  const user2 = {
+    username: username2,
+    password: password2
   };
   const newUser = {
     name,
     username,
     email,
     password
+  };
+  const newUser2 = {
+    name,
+    username: username2,
+    email,
+    password: password2
   };
   const activity = {
     nombre: 'futbol',
@@ -67,19 +79,45 @@ describe('Integration tests', () => {
     );
   });
 
-  describe('Register into activity', () => {
+  describe('Delete activity', () => {
     let token;
-    it('Create and then get activity should return the same', () => Promise.resolve()
+    it('Create and then delete activity should delete activity', () => Promise.resolve()
       .then(()    => registerRequest(newUser))
       .then(()    => authenticateRequest(user))
       .then((res) => (token = res.body.token))
       .then(()    => createActivity(activity, token))
-      .then((res) => registerInActivity(res.body._id, token))
+      .then((res) => deleteActivity(res.body._id, token))
+      .then(()    => getActivities(token))
+      .then((res) => assert.deepEqual(res.body, []))
+    );
+  });
+
+  describe('Register into activity', () => {
+    let token;
+    let token2;
+    it('Create and then get activity should return the same', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => registerRequest(newUser2))
+      .then(()    => authenticateRequest(user2))
+      .then((res) => (token2 = res.body.token))
+      .then(()    => createActivity(activity, token))
+      .then((res) => {
+        return registerInActivity(res.body._id, token)
+        .then(() => registerInActivity(res.body._id, token2))
+      })
       .then(()    => getActivities(token))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
         const expectedParticipants = activity.participantes;
         expectedParticipants.push(username)
+        expectedParticipants.push(username2)
+        assert.deepEqual(expectedParticipants, newParticipants)
+      })
+      .then(()    => getActivities(token2))
+      .then((res) => {
+        const newParticipants = res.body[0].participantes;
         assert.deepEqual(expectedParticipants, newParticipants)
       })
     );
@@ -87,16 +125,16 @@ describe('Integration tests', () => {
 });
 
 //  AUXILIAR FUNCTIONS
-const registerRequest = (newUser) => Promise.resolve(
+const registerRequest = (regUser) => Promise.resolve(
   request.post(baseUrl + '/users/register')
     .set({'content-type': 'application/json'})
-    .send(newUser)
+    .send(regUser)
 );
 
-const authenticateRequest = (user) => Promise.resolve(
+const authenticateRequest = (authUser) => Promise.resolve(
   request.post(baseUrl + '/users/authenticate')
     .set({'content-type': 'application/json'})
-    .send(user)
+    .send(authUser)
 );
 
 const createActivity = (activity, token) => Promise.resolve(
@@ -114,6 +152,13 @@ const getActivities = (token) => Promise.resolve(
 
 const registerInActivity = (id, token) => Promise.resolve(
   request.put(baseUrl + '/activities/' + id + '/register')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send()
+);
+
+const deleteActivity = (id, token) => Promise.resolve(
+  request.delete(baseUrl + '/activities/' + id)
     .set({'content-type': 'application/json'})
     .set({'Authorization': token})
     .send()
