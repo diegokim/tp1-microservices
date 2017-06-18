@@ -26,6 +26,10 @@ module.exports.getObjectiveById = function (id) {
   return Objective.findById(id);
 }
 
+module.exports.getObjectiveBy = function (query) {
+  return Objective.find(query);
+}
+
 module.exports.getObjectivesByUsername = function (username) {
   const query = { username }
   return Objective.find(query);

@@ -12,8 +12,11 @@ router.post('/objectives', passport.authenticate('jwt', {'session': false}), (re
   res.status(400).json({ message: 'Missing params' });
 });
 
-//  Update an objective
-router.put('/objectives/:objetiveId', passport.authenticate('jwt', {'session': false}), (req, res) => objectivesController.update(req, res));
+//  Put an activity into an objective
+router.put('/objectives/:objetiveId', passport.authenticate('jwt', {'session': false}), (req, res) => {
+  objectivesController.addActivity(req, res)
+  .catch(() => res.status(400).json({ message: 'Invalid activity' }))
+});
 
 //  Get objectives
 router.get('/objectives', passport.authenticate('jwt', {'session': false}), (req, res) => objectivesController.list(req, res));

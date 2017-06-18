@@ -15,3 +15,11 @@ module.exports.register = ({ activityId, username }) => Promise.resolve()
 module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
+
+module.exports.activityExists = (activityId) => ActivityRepository.findById(activityId)
+  .then((activity) => {
+    if (activity) {
+      return Promise.resolve();
+    }
+    return Promise.reject();
+  })

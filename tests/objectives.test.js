@@ -46,8 +46,7 @@ describe('Objective tests', () => {
   const objective = {
   	nombre: 'Dejar de fumar',
   	descripcion: 'El pucho me esta haciendo mal',
-  	categorias: ['Salud'],
-  	actividades: []
+  	categorias: ['Salud']
   }
 
 	// Leave the database in a valid state
@@ -56,6 +55,7 @@ describe('Objective tests', () => {
 		.then(done)
 		.catch(done);
   });
+
 
   describe('Create and get objectives', () => {
     let token;
@@ -67,10 +67,33 @@ describe('Objective tests', () => {
       .then(()    => getObjectives(token))
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
-        assert.deepEqual(createdObjective, Object.assign(objective, { username }));
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
       })
+
     );
   });
+
+  describe('Activity and objective binding', () => {
+    let token;
+    let objId;
+    it('Create and then get objectives should contain the created objective', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => token = res.body.token)
+      .then(() => token ? Promise.resolve() : Promise.reject())
+      .then(()    => createObjective(objective, token))
+      .then((res) => (objId = res.body._id) )
+      .then(() => createActivity(activity,token))
+      .then((res) => addActivityToObjective(objId, res.body._id, token) )
+      .then(()    => getObjectives(token))
+      .then((res) => {
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
+      })
+      .catch((err) => console.log(err.response.error))
+    );
+  });
+
 //  End of Test case
 });
 
@@ -99,6 +122,13 @@ const createObjective = (objective, token) => Promise.resolve(
     .set({'content-type': 'application/json'})
     .set({'Authorization': token})
     .send(objective)
+);
+
+const addActivityToObjective = (objectiveId, activityId, token) => Promise.resolve(
+  request.put(baseUrl + '/objectives/' + objectiveId)
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send({ activityId })
 );
 
 const getObjectives = (token) => Promise.resolve(
