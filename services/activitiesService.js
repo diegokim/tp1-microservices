@@ -16,3 +16,6 @@ module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
 
+module.exports.search = ({ params }) => Promise.resolve()
+	.then(() => ActivityRepository.search(params))
+;

@@ -110,7 +110,7 @@ module.exports = {
         "max-lines": "error",
         "max-nested-callbacks": "error",
         "max-params": "off",
-        "max-statements": "error",
+        "max-statements": "off",
         "max-statements-per-line": "error",
         "multiline-ternary": [
             "error",
@@ -238,7 +238,7 @@ module.exports = {
         "prefer-const": "error",
         "prefer-numeric-literals": "error",
         "prefer-promise-reject-errors": "off",
-        "prefer-reflect": "error",
+        "prefer-reflect": "off",
         "prefer-rest-params": "error",
         "prefer-spread": "error",
         "prefer-template": "off",
