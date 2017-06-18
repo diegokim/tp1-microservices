@@ -97,10 +97,8 @@ describe('Integration tests', () => {
     let token2;
     it('Create and then get activity should return the same', () => Promise.resolve()
       .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
       .then((res) => (token = res.body.token))
       .then(()    => registerRequest(newUser2))
-      .then(()    => authenticateRequest(user2))
       .then((res) => (token2 = res.body.token))
       .then(()    => createActivity(activity, token))
       .then((res) => {
@@ -118,7 +116,7 @@ describe('Integration tests', () => {
       .then(()    => getActivities(token2))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
-        assert.deepEqual(expectedParticipants, newParticipants)
+        assert.deepEqual( activity.participantes, newParticipants)
       })
     );
   });
@@ -252,12 +250,6 @@ const compareActivities = (givenAct, expectedAct) => {
 
   assert.deepEqual(givenAct, expectedAct);
 }
-
-const registerRequest = (newUser) => Promise.resolve(
-  request.post(baseUrl + '/users/register')
-    .set({'content-type': 'application/json'})
-    .send(regUser)
-);
 
 const authenticateRequest = (authUser) => Promise.resolve(
   request.post(baseUrl + '/users/authenticate')
