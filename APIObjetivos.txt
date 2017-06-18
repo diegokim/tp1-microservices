@@ -46,5 +46,16 @@ body: {
 	nombre:”Dejar de fumar”,
 	descripcion:”El pucho me esta haciendo mal”,
 	categorias: [“Salud”],
-	actividades: [] //Puede estar vacia
+	actividades: [“xcmvn123cn12mn”] //id de una actividad
+}
+
+respuesta --> 201
+
+body: {
+	_id: “as123j5kl435j4kc”,
+	username:”diego”
+	nombre:”Dejar de fumar”,
+	descripcion:”El pucho me esta haciendo mal”,
+	categorias: [“Salud”],
+	actividades: [“xcmvn123cn12mn”]
 }
