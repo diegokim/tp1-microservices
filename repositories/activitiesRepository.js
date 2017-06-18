@@ -70,31 +70,31 @@ module.exports.create = function (activity) {
 
 
 module.exports.search = function (params) {
-  const query = { $or: [] }
+  const query = { $and: [{ $or: [] }, { tipo: 'publica' }] }
   if (params.tipo === 'random') {
     return Activity.find().limit(5).skip(_rand() * Activity.count())
   } else {
     if (params.fechaDesde && params.fechaHasta) {
-      query.$or.push({ fechaInicio: { $gt: params.fechaDesde } })
+      query.$and[0].$or.push({ $and: [{ fechaInicio: { $gt: params.fechaDesde } }, { fechaFin: { $lt: params.fechaHasta } }] })
     } else if (params.fechaDesde) {
-      query.$or.push({ fechaInicio: { $gt: params.fechaDesde } })
+      query.$and[0].$or.push({ fechaInicio: { $gt: params.fechaDesde } })
     } else if (params.fechaHasta) {
-      query.$or.push({ fechaFin: { $lt: params.fechaHasta } })
+      query.$and[0].$or.push({ fechaFin: { $lt: params.fechaHasta } })
     }
     if (params.texto) {
-      const regex = new RegExp('*' + texto + '*');
-      query.$or.push(
+      const regex = new RegExp('.*' + params.texto + '.*');
+      query.$and[0].$or.push(
         { nombre: regex },
         { descripcion: regex },
-        { categorias: { $elemMatch: regex } })
+        { categorias: { $regex: regex } })
     }
     if (params.categorias) {
       for (const categoria of params.categorias) {
-        const regex = new RegExp('*' + categoria + '*');
-        query.$or.push(
+        const regex = new RegExp('.*' + categoria + '.*');
+        query.$and[0].$or.push(
           { nombre: regex },
           { descripcion: regex },
-          { categorias: { $elemMatch: regex } })
+          { categorias: { $regex: regex } })
       }
     }
   }

@@ -70,11 +70,11 @@ describe('Integration tests', () => {
     let searchParams;
     let expectedActivities;
     const activityList = [
-      Object.assign({}, activity, { fechaInicio: '1/1/2017', fechaFin: '1/1/2017', nombre: 'act futbol', descripcion: 'partido de futbol', categorias: ['futbol', 'pelota'] }),
-      Object.assign({}, activity, { fechaInicio: '2/2/2017', fechaFin: '2/2/2017', nombre: 'act fiesta', descripcion: 'fiesta punchi punchi', categorias: ['fiesta', 'locura', 'alcohol'] }),
-      Object.assign({}, activity, { fechaInicio: '3/3/2017', fechaFin: '3/3/2017', nombre: 'act zapatillas', descripcion: 'compra zapatillas ML', categorias: ['zapatillas', 'moda', 'ML'] }),
-      Object.assign({}, activity, { fechaInicio: '4/4/2017', fechaFin: '4/4/2017', nombre: 'act trabajo', descripcion: 'trabajo duro como un esclavo', categorias: ['trabajo', 'desempleo'] }),
-      Object.assign({}, activity, { fechaInicio: '5/5/2017', fechaFin: '5/5/2017', nombre: 'act racing', descripcion: 'partido de racing', categorias: ['futbol', 'racing'] })
+      Object.assign({}, activity, { fechaInicio: '1/1/2017', fechaFin: '1/1/2017', nombre: 'act futbol', tipo: 'privada', descripcion: 'partido de futbol', categorias: ['futbol', 'pelota'] }),
+      Object.assign({}, activity, { fechaInicio: '2/2/2017', fechaFin: '2/2/2017', nombre: 'act fiesta', tipo: 'publica',descripcion: 'fiesta punchi punchi', categorias: ['fiesta', 'locura', 'alcohol'] }),
+      Object.assign({}, activity, { fechaInicio: '3/3/2017', fechaFin: '3/3/2017', nombre: 'act zapatillas', tipo: 'publica',descripcion: 'compra zapatillas ML', categorias: ['zapatillas', 'moda', 'ML'] }),
+      Object.assign({}, activity, { fechaInicio: '4/4/2017', fechaFin: '4/4/2017', nombre: 'act trabajo', tipo: 'publica',descripcion: 'trabajo duro como un esclavo', categorias: ['trabajo', 'desempleo'] }),
+      Object.assign({}, activity, { fechaInicio: '5/5/2017', fechaFin: '5/5/2017', nombre: 'act racing', tipo: 'publica',descripcion: 'partido de racing', categorias: ['futbol', 'racing'] })
     ]
 
     describe('fechaHasta', () => {
@@ -82,7 +82,7 @@ describe('Integration tests', () => {
         searchParams = {
           fechaHasta: '1/2/2017'
         };
-        expectedActivities = [activityList[0]];
+        expectedActivities = [];
       });
 
       it('Should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
@@ -94,6 +94,28 @@ describe('Integration tests', () => {
           fechaDesde: '1/2/2017'
         };
         expectedActivities = [activityList[1], activityList[2], activityList[3], activityList[4]];
+      });
+
+      it('Should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'racing'
+        };
+        expectedActivities = [activityList[4]];
+      });
+
+      it('Should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto matching public and private activities', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'futbol'
+        };
+        expectedActivities = [activityList[4]];
       });
 
       it('Should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
