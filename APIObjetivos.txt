@@ -1,4 +1,4 @@
-GET /objetivos
+GET /objetives
 
 HEADER: AUTHORIZATION, Bearer + token
 

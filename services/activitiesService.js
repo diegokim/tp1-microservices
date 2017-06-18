@@ -15,4 +15,3 @@ module.exports.register = ({ activityId, username }) => Promise.resolve()
 module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
-
