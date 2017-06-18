@@ -122,10 +122,138 @@ describe('Integration tests', () => {
       })
     );
   });
+
+  describe('Search activities', () => {
+    let searchParams;
+    let expectedActivities;
+    const activityList = [
+      Object.assign({}, activity, { fechaInicio: '1/1/2017', fechaFin: '1/1/2017', nombre: 'act futbol', tipo: 'privada', descripcion: 'partido de futbol', categorias: ['futbol', 'pelota'] }),
+      Object.assign({}, activity, { fechaInicio: '2/2/2017', fechaFin: '2/2/2017', nombre: 'act fiesta', tipo: 'publica',descripcion: 'fiesta punchi punchi', categorias: ['fiesta', 'locura', 'alcohol'] }),
+      Object.assign({}, activity, { fechaInicio: '3/3/2017', fechaFin: '3/3/2017', nombre: 'act zapatillas', tipo: 'publica',descripcion: 'compra zapatillas ML trabajo', categorias: ['zapatillas', 'moda', 'ML'] }),
+      Object.assign({}, activity, { fechaInicio: '4/4/2017', fechaFin: '4/4/2017', nombre: 'act trabajo', tipo: 'publica',descripcion: 'trabajo duro como un esclavo', categorias: ['trabajo', 'desempleo'] }),
+      Object.assign({}, activity, { fechaInicio: '5/5/2017', fechaFin: '5/5/2017', nombre: 'act racing', tipo: 'publica',descripcion: 'partido de racing', categorias: ['futbol', 'racing'] })
+    ]
+
+    describe('fechaHasta', () => {
+      beforeEach(() => {
+        searchParams = {
+          fechaHasta: '1/2/2017'
+        };
+        expectedActivities = [];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('fechaDesde', () => {
+      beforeEach(() => {
+        searchParams = {
+          fechaDesde: '1/2/2017'
+        };
+        expectedActivities = [activityList[1], activityList[2], activityList[3], activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto (1)', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'racing'
+        };
+        expectedActivities = [activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto (2)', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'no-match'
+        };
+        expectedActivities = [];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto matching public and private activities', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'futbol'
+        };
+        expectedActivities = [activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('categories (1)', () => {
+      beforeEach(() => {
+        searchParams = {
+          categorias: ['alcohol', 'desempleo']
+        };
+        expectedActivities = [activityList[1], activityList[3]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('categories (2)', () => {
+      beforeEach(() => {
+        searchParams = {
+          categorias: ['trabajo']
+        };
+        expectedActivities = [activityList[2], activityList[3]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('random', () => {
+      beforeEach(() => {
+        searchParams = {
+          tipo: 'random'
+        };
+        expectedActivities = [activityList[0], activityList[1], activityList[2], activityList[3], activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    const searchAndCompareActivities = (searchParams, expectedActivities) => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => createActivity(activityList[0], token))
+      .then(()    => createActivity(activityList[1], token))
+      .then(()    => createActivity(activityList[2], token))
+      .then(()    => createActivity(activityList[3], token))
+      .then(()    => createActivity(activityList[4], token))
+      .then((res) => searchActivities(searchParams, token))
+      .then((res) => compareActivities(res.body, expectedActivities))
+  });
 });
 
 //  AUXILIAR FUNCTIONS
 const registerRequest = (regUser) => Promise.resolve(
+  request.post(baseUrl + '/users/register')
+    .set({'content-type': 'application/json'})
+    .send(regUser)
+);
+
+const compareActivities = (givenAct, expectedAct) => {
+  for (const activ of givenAct) {
+    delete activ._id;
+    delete activ.__v;
+    delete activ.username;
+  }
+
+  assert.deepEqual(givenAct, expectedAct);
+}
+
+const registerRequest = (newUser) => Promise.resolve(
   request.post(baseUrl + '/users/register')
     .set({'content-type': 'application/json'})
     .send(regUser)
@@ -148,6 +276,13 @@ const getActivities = (token) => Promise.resolve(
   request.get(baseUrl + '/activities')
     .set({'Authorization': token})
     .send()
+);
+
+const searchActivities = (searchParams, token) => Promise.resolve(
+  request.get(baseUrl + '/activities/search')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send(searchParams)
 );
 
 const registerInActivity = (id, token) => Promise.resolve(

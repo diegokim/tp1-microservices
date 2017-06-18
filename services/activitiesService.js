@@ -25,3 +25,7 @@ module.exports.delete = ({ activityId, username }) => Promise.resolve()
     return Promise.reject({ status: 403, message: 'Unauthorize' });
   })
 ;
+
+module.exports.search = ({ params }) => Promise.resolve()
+	.then(() => ActivityRepository.search(params))
+;
