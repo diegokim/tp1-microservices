@@ -59,8 +59,18 @@ module.exports.getActivityById = function (id) {
   return Activity.findById(id);
 }
 
+module.exports.getActivityByIdAndUsername = function (id, username) {
+  const query = { $and: [{ _id: id }, { username }] };
+  return Activity.findOne(query);
+}
+
+module.exports.delete = function (id) {
+  const query = { _id: id };
+  return Activity.remove(query);
+}
+
 module.exports.getActivitiesByUsername = function (username) {
-  const query = { username }
+  const query = { $or: [{ username }, { participantes: { $regex: username } }] }
   return Activity.find(query);
 }
 

@@ -42,6 +42,14 @@ module.exports.list = (req, res) => {
 		.catch((err) => res.status(err.status).json(err.message));
 };
 
+module.exports.delete = (req, res) => {
+  const username = req.user.username
+  const activityId = req.params.activityId
+  return activitiesService.delete({ username, activityId })
+		.then(() => res.status(204).send())
+		.catch((err) => res.status(err.status).json(err.message));
+};
+
 module.exports.search = (req, res) => {
   const params = _.pick(req.body, [
     'tipo',
