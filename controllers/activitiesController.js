@@ -27,6 +27,14 @@ module.exports.create = (req, res) => {
   	.catch((err) => res.status(err.status).json(err.message));
 };
 
+module.exports.register = (req, res) => {
+  const username = req.user.username
+  const activityId = req.params.activityId
+  return activitiesService.register({ username, activityId })
+		.then(() => res.status(204).send())
+		.catch((err) => res.status(err.status).json(err.message));
+};
+
 module.exports.list = (req, res) => {
   const username = req.user.username
   return activitiesService.list({ username })

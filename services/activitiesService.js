@@ -7,6 +7,11 @@ module.exports.create = ({ activity, username }) => {
   	.catch((err) => Promise.reject({ status: 409, message: err }));
 };
 
+module.exports.register = ({ activityId, username }) => Promise.resolve()
+  .then(() => ActivityRepository.addUser(activityId, username))
+  .catch((err) => Promise.reject({ status: 409, message: err }))
+;
+
 module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;

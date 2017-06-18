@@ -1,10 +1,8 @@
+/* eslint-disable */
 const assert = require('chai').assert;
 const request = require('superagent');
 const DB = require('../wrappers/database');
 const _ = require('lodash');
-
-// eslint-disable-next-line
-//const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
@@ -54,11 +52,12 @@ describe('Integration tests', () => {
 
   describe('Create and get activities', () => {
     let token;
-    it('Create and then get activities should contain the created activity', () => registerRequest(newUser)
-      .then(() => authenticateRequest(user))
+    it('Create and then get activities should contain the created activity', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(() => createActivity(activity, token))
-      .then(() => getActivities(token))
+      .then(()    => createActivity(activity, token))
+      .then(()    => getActivities(token))
       .then((res) => {
         const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
           'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
@@ -68,16 +67,23 @@ describe('Integration tests', () => {
     );
   });
 
-  // describe('Create and get activity', () => {
-  //   let token;
-  //   it('Create and then get activity should return the same', () => registerRequest(newUser)
-  //     .then(() => authenticateRequest(user))
-  //     .then((res) => (token = res.body.token))
-  //     .then(() => createActivity(activity, token))
-  //     .then((res) => getActivity(res.body.id, token))
-  //     .then((activ) => assert.include(activ, activity))
-  //   );
-  // });
+  describe('Register into activity', () => {
+    let token;
+    it('Create and then get activity should return the same', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => createActivity(activity, token))
+      .then((res) => registerInActivity(res.body._id, token))
+      .then(()    => getActivities(token))
+      .then((res) => {
+        const newParticipants = res.body[0].participantes;
+        const expectedParticipants = activity.participantes;
+        expectedParticipants.push(username)
+        assert.deepEqual(expectedParticipants, newParticipants)
+      })
+    );
+  });
 });
 
 //  AUXILIAR FUNCTIONS
@@ -106,9 +112,9 @@ const getActivities = (token) => Promise.resolve(
     .send()
 );
 
-// const getActivity = (id, token) => Promise.resolve(
-//   request.get(baseUrl + '/activities/' + id)
-//     .set({'content-type': 'application/json'})
-//     .set({'Authorization': token})
-//     .send()
-// );
+const registerInActivity = (id, token) => Promise.resolve(
+  request.put(baseUrl + '/activities/' + id + '/register')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send()
+);

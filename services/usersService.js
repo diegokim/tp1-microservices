@@ -11,7 +11,8 @@ module.exports.register = ({ name, username, email, password }) => {
   });
 
   return UserRepository.validateNewUser(newUser)
-		.then(() 		 => UserRepository.addUser(newUser))
+		.then(() => UserRepository.addUser(newUser))
+    .then((createdUser) => (Object.assign({}, createdUser, getToken(createdUser.username))))
   	.catch((err) => Promise.reject({ status: 409, message: err }));
 };
 
@@ -27,7 +28,7 @@ module.exports.authenticate = ({ username, password }) => Promise.resolve()
  */
 const getToken = (username) => {
   const token = 'JWT ' + jwt.sign({ username }, configDB.secret, { 'expiresIn': 60480 * 100000 });
-  return Promise.resolve({ token });
+  return { token };
 };
 
 /**
