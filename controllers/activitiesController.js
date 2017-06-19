@@ -15,7 +15,7 @@ module.exports.create = (req, res) => {
     'recordatorio',
     'periodicidad',
     'estimacion',
-    'objetivo',
+    'foto',
     'tipo',
     'beneficios'
   ])
@@ -54,8 +54,8 @@ module.exports.search = (req, res) => {
   const params = _.pick(req.body, [
     'tipo',
     'texto',
-    'fechaHasta',
-    'fechaDesde',
+    'fechaInicio',
+    'fechaFin',
     'categorias'
   ])
   return activitiesService.search({ params })

@@ -2,12 +2,13 @@ const UserRepository = require('../repositories/usersRepository');
 const configDB = require('../config/database');
 const jwt = require('jsonwebtoken');
 
-module.exports.register = ({ name, username, email, password }) => {
+module.exports.register = ({ name, username, email, password, nacimiento }) => {
   const newUser = new UserRepository({	// NEW ?
     name,
     email,
     username,
-    password
+    password,
+    nacimiento
   });
 
   return UserRepository.validateNewUser(newUser)
