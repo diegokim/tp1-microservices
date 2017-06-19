@@ -46,7 +46,10 @@ describe('Integration tests', () => {
       }));
 
     it('Auth with a correct username and password should return a token', () => registerRequest(newUser)
-      .then(() => authenticateRequest(user))
+      .then((res) => {
+        assert.deepProperty(res.body, 'token');
+        return authenticateRequest(user)
+      })
       .then((res) => {
         assert.equal(res.status, 200);
         assert.deepProperty(res.body, 'token');

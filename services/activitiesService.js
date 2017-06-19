@@ -7,8 +7,27 @@ module.exports.create = ({ activity, username }) => {
   	.catch((err) => Promise.reject({ status: 409, message: err }));
 };
 
+module.exports.register = ({ activityId, username }) => Promise.resolve()
+  .then(() => ActivityRepository.addUser(activityId, username))
+  .catch((err) => Promise.reject({ status: 409, message: err }))
+;
+
 module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
 
-module.exports.update = (id, username, activity) => ActivityRepository.update(id, username, activity)
+module.exports.update = (id, username, activity) => ActivityRepository.updateActivity(id, username, activity)
+
+module.exports.delete = ({ activityId, username }) => Promise.resolve()
+  .then(() => ActivityRepository.getActivityByIdAndUsername(activityId, username))
+  .then((activ) => {
+    if (activ) {
+      return ActivityRepository.delete(activityId);
+    }
+    return Promise.reject({ status: 403, message: 'Unauthorize' });
+  })
+;
+
+module.exports.search = ({ params }) => Promise.resolve()
+	.then(() => ActivityRepository.search(params))
+;

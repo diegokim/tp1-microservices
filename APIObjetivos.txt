@@ -1,0 +1,61 @@
+GET /objetivos
+
+HEADER: AUTHORIZATION, Bearer + token
+
+respuesta --> 200 // + LISTA DE OBJETIVOS
+	body: [{
+		_id: "",
+		username:””
+		nombre: "",
+		descripcion: "",
+		categorias: ["categoria", "categoria"],
+		actividades: [“_id_actividad1”,”_id_actividad2”]
+	}]
+
+——————————————————————
+ 
+POST /objetivos
+
+HEADER: AUTHORIZATION, Bearer + token
+
+body: {
+	nombre:”Dejar de fumar”,
+	descripcion:”El pucho me esta haciendo mal”,
+	categorias: [“Salud”],
+	actividades: [] //Puede estar vacia
+}
+
+respuesta --> 201
+
+body: {
+	_id: “as123j5kl435j4kc”,
+	username:”diego”
+	nombre:”Dejar de fumar”,
+	descripcion:”El pucho me esta haciendo mal”,
+	categorias: [“Salud”],
+	actividades: []
+}
+
+——————————————————
+
+PUT /objetivos/{id} //UPDATE DEL OBJETIVO
+
+HEADER: AUTHORIZATION, Bearer + token
+
+body: {
+	nombre:”Dejar de fumar”,
+	descripcion:”El pucho me esta haciendo mal”,
+	categorias: [“Salud”],
+	actividades: [“xcmvn123cn12mn”] //id de una actividad
+}
+
+respuesta --> 201
+
+body: {
+	_id: “as123j5kl435j4kc”,
+	username:”diego”
+	nombre:”Dejar de fumar”,
+	descripcion:”El pucho me esta haciendo mal”,
+	categorias: [“Salud”],
+	actividades: [“xcmvn123cn12mn”]
+}

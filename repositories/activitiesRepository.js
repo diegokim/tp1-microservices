@@ -59,16 +59,68 @@ module.exports.getActivityById = function (id) {
   return Activity.findById(id);
 }
 
+module.exports.getActivityByIdAndUsername = function (id, username) {
+  const query = { $and: [{ _id: id }, { username }] };
+  return Activity.findOne(query);
+}
+
+module.exports.delete = function (id) {
+  const query = { _id: id };
+  return Activity.remove(query);
+}
+
 module.exports.getActivitiesByUsername = function (username) {
-  const query = { username }
+  const query = { $or: [{ username }, { participantes: { $regex: username } }] }
   return Activity.find(query);
+}
+
+module.exports.addUser = function (activityId, username) {
+  const query = { _id: activityId }
+  return Activity.findById(query)
+    .then((activity) => {
+      const newParticipants = activity.participantes;
+      newParticipants.push(username);
+      return activity.update({ participantes: newParticipants });
+    })
 }
 
 module.exports.create = function (activity) {
   return activity.save();
 }
 
-module.exports.update = function (id, username, updatedActivity) {
+module.exports.updateActivity = function (id, username, updatedActivity) {
   return Activity.findById(id) // Tendria que ver que onda el tema de seguridad
   .then((activity) => activity.update(updatedActivity));
+}
+
+module.exports.search = function (params) {
+  const query = { $and: [{ $or: [] }, { tipo: 'publica' }] }
+  if (params.tipo === 'random') {
+    return Activity.find().limit(5)
+  } else {
+    if (params.fechaDesde && params.fechaHasta) {
+      query.$and[0].$or.push({ $and: [{ fechaInicio: { $gt: params.fechaDesde } }, { fechaFin: { $lt: params.fechaHasta } }] })
+    } else if (params.fechaDesde) {
+      query.$and[0].$or.push({ fechaInicio: { $gt: params.fechaDesde } }) // ESTA COMPARACION DE FECHAS NUNCA VA A FUNCIONAR JAJA
+    } else if (params.fechaHasta) {
+      query.$and[0].$or.push({ fechaFin: { $lt: params.fechaHasta } })
+    }
+    if (params.texto) {
+      const regex = new RegExp('.*' + params.texto + '.*');
+      query.$and[0].$or.push(
+        { nombre: regex },
+        { descripcion: regex },
+        { categorias: { $regex: regex } })
+    }
+    if (params.categorias) {
+      for (const categoria of params.categorias) {
+        const regex = new RegExp('.*' + categoria + '.*');
+        query.$and[0].$or.push(
+          { nombre: regex },
+          { descripcion: regex },
+          { categorias: { $regex: regex } })
+      }
+    }
+  }
+  return Activity.find(query);
 }
