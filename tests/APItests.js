@@ -12,6 +12,7 @@ describe('Integration tests', () => {
   const username = 'diego';
   const email = 'diego@gmail.com';
   const password = 'kim';
+  const nacimiento = '10/10/10';
   const user = {
     username,
     password
@@ -20,7 +21,8 @@ describe('Integration tests', () => {
     name,
     username,
     email,
-    password
+    password,
+    nacimiento
   };
 
 	// Leave the database in a valid state

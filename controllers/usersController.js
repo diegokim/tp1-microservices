@@ -2,7 +2,7 @@ const _ = require('lodash');
 const userService = require('../services/usersService');
 
 module.exports.register = (req, res) => {
-  const user = _.pick(req.body, ['name', 'username', 'email', 'password'])
+  const user = _.pick(req.body, ['name', 'username', 'email', 'password', 'nacimiento'])
 
   return userService.register(user)
 	  .then((createdUser) => res.status(201).json(createdUser))

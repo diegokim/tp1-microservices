@@ -38,7 +38,7 @@ const ActivitySchema = mongoose.Schema({
   estimacion: {
     type: Number
   },
-  objetivo: {
+  foto: {
     type: String
   },
   tipo: {
@@ -93,12 +93,12 @@ module.exports.search = function (params) {
   if (params.tipo === 'random') {
     return Activity.find().limit(5)
   } else {
-    if (params.fechaDesde && params.fechaHasta) {
-      query.$and[0].$or.push({ $and: [{ fechaInicio: { $gt: params.fechaDesde } }, { fechaFin: { $lt: params.fechaHasta } }] })
-    } else if (params.fechaDesde) {
-      query.$and[0].$or.push({ fechaInicio: { $gt: params.fechaDesde } }) // ESTA COMPARACION DE FECHAS NUNCA VA A FUNCIONAR JAJA
-    } else if (params.fechaHasta) {
-      query.$and[0].$or.push({ fechaFin: { $lt: params.fechaHasta } })
+    if (params.fechaInicio && params.fechaFin) {
+      query.$and[0].$or.push({ $and: [{ fechaInicio: { $gt: params.fechaInicio } }, { fechaFin: { $lt: params.fechaFin } }] })
+    } else if (params.fechaInicio) {
+      query.$and[0].$or.push({ fechaInicio: { $gt: params.fechaInicio } }) // ESTA COMPARACION DE FECHAS NUNCA VA A FUNCIONAR JAJA
+    } else if (params.fechaFin) {
+      query.$and[0].$or.push({ fechaFin: { $lt: params.fechaFin } })
     }
     if (params.texto) {
       const regex = new RegExp('.*' + params.texto + '.*');

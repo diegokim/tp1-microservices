@@ -22,7 +22,7 @@ router.delete('/activities/:activityId', passport.authenticate('jwt', {'session'
 router.get('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => activitiesController.list(req, res));
 
 //  Search activities
-router.get('/activities/search', passport.authenticate('jwt', {'session': false}), (req, res) => {
+router.post('/activities/search', passport.authenticate('jwt', {'session': false}), (req, res) => {
   if (validator.isValidSearch(req.body)) {
     return activitiesController.search(req, res);
   }

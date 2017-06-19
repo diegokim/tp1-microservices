@@ -13,6 +13,7 @@ describe('Integration tests', () => {
   const email = 'diego@gmail.com';
   const password = 'kim';
   const password2 = 'ludueno';
+  const nacimiento = '10/10/1990'
   const user = {
     username,
     password
@@ -25,13 +26,15 @@ describe('Integration tests', () => {
     name,
     username,
     email,
-    password
+    password,
+    nacimiento
   };
   const newUser2 = {
     name,
     username: username2,
     email,
-    password: password2
+    password: password2,
+    nacimiento
   };
   const activity = {
     nombre: 'futbol',
@@ -46,7 +49,7 @@ describe('Integration tests', () => {
     recordatorio: '9/7/2017',
     periodicidad: 1,
     estimacion: 2,
-    objetivo: '5 partidos',
+    foto: 'foto en base 64',
     tipo: 'act',
     beneficios: [{
 		  precio: 10,
@@ -73,7 +76,7 @@ describe('Integration tests', () => {
       .then((res) => {
         const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
           'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
     );
@@ -132,10 +135,10 @@ describe('Integration tests', () => {
       Object.assign({}, activity, { fechaInicio: '5/5/2017', fechaFin: '5/5/2017', nombre: 'act racing', tipo: 'publica',descripcion: 'partido de racing', categorias: ['futbol', 'racing'] })
     ]
 
-    describe('fechaHasta', () => {
+    describe('fechaFin', () => {
       beforeEach(() => {
         searchParams = {
-          fechaHasta: '1/2/2017'
+          fechaFin: '1/2/2017'
         };
         expectedActivities = [];
       });
@@ -143,10 +146,10 @@ describe('Integration tests', () => {
       it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
     })
 
-    describe('fechaDesde', () => {
+    describe('fechaInicio', () => {
       beforeEach(() => {
         searchParams = {
-          fechaDesde: '1/2/2017'
+          fechaInicio: '1/2/2017'
         };
         expectedActivities = [activityList[1], activityList[2], activityList[3], activityList[4]];
       });
@@ -271,7 +274,7 @@ const getActivities = (token) => Promise.resolve(
 );
 
 const searchActivities = (searchParams, token) => Promise.resolve(
-  request.get(baseUrl + '/activities/search')
+  request.post(baseUrl + '/activities/search')
     .set({'content-type': 'application/json'})
     .set({'Authorization': token})
     .send(searchParams)
