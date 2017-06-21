@@ -19,7 +19,7 @@ https://www.mongodb.com/download-center?jmp=nav#community
 Node JS:
 https://nodejs.org/es/
 
-Una vez que tenemos esto instalado, nos paramos en el directorio raiz y utilizamos el siguiente comando:
+Una vez que tenemos esto instalado, nos paramos en el directorio raiz de este proyecto y utilizamos el siguiente comando:
 
 > $ npm install
 
@@ -30,6 +30,12 @@ Esto instala las dependencias (bibliotecas externas que utiliza el proyecto que 
 Una de las precondiciones que existen para que funcione el servidor es que el demonio de mongodb este corriendo. Para esto yo utilizo:
 
 > $ sudo mongod
+
+Si da este error:
+exception in initAndListen: 29 Data directory /data/db not found., terminating
+
+Ejecutar como root:
+> $ mkdir -p /data/db
 
 Para correr el servidor:
 
