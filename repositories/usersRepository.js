@@ -56,9 +56,8 @@ module.exports.addUser = function (newUser) {
     .then((hash) => {
       const createdUser = _.pick(newUser, ['id', 'name', 'username', 'email', 'password', 'nacimiento']);
       newUser.password = hash;
-      newUser.save();
-
-      return createdUser;
+      return newUser.save()
+        .then(() => createdUser);
     })
 }
 
