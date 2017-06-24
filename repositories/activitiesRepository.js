@@ -59,6 +59,20 @@ module.exports.getActivityById = function (id) {
   return Activity.findById(id);
 }
 
+module.exports.removeFromActivity = function (id, username) {
+  return Activity.findById(id)
+    .then((activity) => {
+      if (activity) {
+        const newParticipants = activity.participantes;
+        const userIndex = newParticipants.indexOf(username);
+        if (userIndex > -1) {
+          newParticipants.splice(userIndex, 1);
+        }
+        return activity.update({ participantes: newParticipants });
+      }
+    })
+}
+
 module.exports.getActivityByIdAndUsername = function (id, username) {
   const query = { $and: [{ _id: id }, { username }] };
   return Activity.findOne(query);

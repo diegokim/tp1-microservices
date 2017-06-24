@@ -84,6 +84,8 @@ describe('Integration tests', () => {
 
   describe('Delete activity', () => {
     let token;
+    let token2;
+    let activityId;
     it('Create and then delete activity should delete activity', () => Promise.resolve()
       .then(()    => registerRequest(newUser))
       .then(()    => authenticateRequest(user))
@@ -92,6 +94,32 @@ describe('Integration tests', () => {
       .then((res) => deleteActivity(res.body._id, token))
       .then(()    => getActivities(token))
       .then((res) => assert.deepEqual(res.body, []))
+    );
+
+    it('Create and then delete activity from other user should remove this user from this activity',
+            ()    => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => registerRequest(newUser2))
+      .then((res) => (token2 = res.body.token))
+      .then(()    => createActivity(activity, token))
+      .then((res) => {
+        activityId = res.body._id;
+        return registerInActivity(activityId, token2)
+      })
+      .then(()    => getActivities(token2))
+      .then((res) => {
+        const participants = res.body[0].participantes;
+        const expectedParticipants = activity.participantes;
+        expectedParticipants.push(username2)
+        assert.deepEqual(expectedParticipants, participants)
+      })
+      .then(()    => deleteActivity(activityId, token2))
+      .then(()    => getActivities(token2))
+      .then((res) => assert.deepEqual([], res.body))
+      .then(()    => getActivities(token))
+      .then((res) => assert.deepEqual(res.body.length, 1))
     );
   });
 

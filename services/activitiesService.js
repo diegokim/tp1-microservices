@@ -17,10 +17,14 @@ module.exports.list = ({ username }) => Promise.resolve()
 ;
 
 module.exports.delete = ({ activityId, username }) => Promise.resolve()
-  .then(() => ActivityRepository.getActivityByIdAndUsername(activityId, username))
+  .then(() => ActivityRepository.getActivityById(activityId))
   .then((activ) => {
     if (activ) {
-      return ActivityRepository.delete(activityId);
+      if (activ.username === username) {
+        return ActivityRepository.delete(activityId);
+      } else {
+        return ActivityRepository.removeFromActivity(activityId, username)
+      }
     }
     return Promise.reject({ status: 403, message: 'Unauthorize' });
   })

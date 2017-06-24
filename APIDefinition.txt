@@ -1,11 +1,12 @@
 POST /users
+	HEADER: Content-type, application/json
 	body: {
-		nombreUsuario: "lucas", 
-    email: "lucas@gmail",
-		sexo: "masculino", // masculino, femenimo
-		tipo: "premium", // free, premium, premiumAPI, premium
-		contraseña: "lucas",
-		nacimiento: "13/08/93"
+		"username": "name",
+		"password": "pass",
+		"nacimiento": "alguno",
+		"email": "masculino",
+		"name": "lucas",
+		"tipo": "free"
 	}
 
 	respuesta --> 201 Y 
@@ -17,26 +18,28 @@ POST /users
 ---------------------------------------------
 
 POST /activities // CREAR UNA ACTIVIDAD
+	HEADER: Content-type, application/json
 	HEADER: AUTHORIZATION, Bearer + token
-	body: {
-		nombre: "futbol",
-		descripcion: "partido de futbol",
-		fechaInicio: "10/7/2017",
-		horaInicio: "12:00",
-		fechaFin: "10/7/2017",
-		horaFin: "13:00",
-		categorias: ["futbol", "pelota", "racing"],
-		prioridad: "alta",
-		participantes: ["diego", "juanma", "lautaro", "hugo"],
-		recordatorio: "9/7/2017",
-		periodicidad: 0,
-		estimacion: 0,
-		objetivo: "5 partidos",
-		tipo: "",
-		beneficios: [{
-			precio: 0,
-			descuento: 0,
-			descripcion: ""
+	body:   {
+    "nombre": "MY FEST",
+		"descripcion": "la mejor fiesta",
+    "fechaInicio": "14/10/2017",
+    "horaInicio": "20:00",
+    "fechaFin": "14/10/2017",
+    "horaFin": "23:00",
+    "categorias": ["fiesta", "locula", "beer"],
+    "prioridad": "alta",
+    "participantes": ["yo"],
+    "recordatorio": "ninguno",
+    "periodicidad": 1,
+    "estimacion": 3,
+    "lugar": "Palermo. Osvaldo 940",
+    "foto": "foto en base 64",
+    "tipo": "privada",
+    "beneficios": [{
+			"precio": 100,
+			"descuento": 10,
+			"descripcion": "hiper descuento"
 		}]
 	}
 
@@ -50,48 +53,56 @@ GET /activities // OBTENER LISTA DE ACTIVIDADES
 
 	respuesta --> 200 // + LISTA DE ACTIVIDADES
 	body: [{
-		_id: "",
-		username: "",
-		nombre: "",
-		descripcion: "",
-		fechaInicio: "",
-		horaInicio: "",
-		fechaFin: "",
-		horaFin: "",
-		categorias: ["categoria", "categoria"],
-		prioridad: "",
-		participantes: ["username", "username"],
-		recordatorio: "fecha",
-		periodicidad: int,
-		estimacion: int,
-		objetivo: "",
-		tipo: ""
+		"_id": "09234jnjksdf987hu",
+		"username": "username",
+    "nombre": "MY FEST",
+		"descripcion": "la mejor fiesta",
+    "fechaInicio": "14/10/2017",
+    "horaInicio": "20:00",
+    "fechaFin": "14/10/2017",
+    "horaFin": "23:00",
+    "categorias": ["fiesta", "locula", "beer"],
+    "prioridad": "alta",
+    "participantes": ["yo"],
+    "recordatorio": "ninguno",
+    "periodicidad": 1,
+    "estimacion": 3,
+    "lugar": "Palermo. Osvaldo 940",
+    "foto": "foto en base 64",
+    "tipo": "privada",
+    "beneficios": [{
+			"precio": 100,
+			"descuento": 10,
+			"descripcion": "hiper descuento"
+		}]
 	}]
 
 
 ---------------------------------------------
 
 UPDATE /activities/{id} // EDITAR ACTIVIDAD
+	HEADER: Content-type, application/json
 	HEADER: AUTHORIZATION, Bearer + token
 	body: {
-		nombre: "",
-		descripcion: "",
-		fechaInicio: "",
-		horaInicio: "",
-		fechaFin: "",
-		horaFin: "",
-		categorias: ["categoria", "categoria"],
-		prioridad: "",
-		participantes: ["username", "username"],
-		recordatorio: "fecha",
-		periodicidad: int,
-		estimacion: int,
-		objetivo: "",
-		tipo: "",
-		beneficios: [{
-			precio: int,
-			descuento: int,
-			descripcions
+		"nombre": "MY FEST",
+		"descripcion": "la mejor fiesta",
+    "fechaInicio": "14/10/2017",
+    "horaInicio": "20:00",
+    "fechaFin": "14/10/2017",
+    "horaFin": "23:00",
+    "categorias": ["fiesta", "locula", "beer"],
+    "prioridad": "alta",
+    "participantes": ["yo"],
+    "recordatorio": "ninguno",
+    "periodicidad": 1,
+    "estimacion": 3,
+    "lugar": "Palermo. Osvaldo 940",
+    "foto": "foto en base 64",
+    "tipo": "privada",
+    "beneficios": [{
+			"precio": 100,
+			"descuento": 10,
+			"descripcion": "hiper descuento"
 		}]
 	}
 
@@ -107,7 +118,8 @@ PUT /activities/{id}/register // ELEGIR EN ACTIVIDAD
 
 ---------------------------------------------
 
-GET /activities/search // BUSCAR ACTIVIDAD
+POST /activities/search // BUSCAR ACTIVIDAD
+	HEADER: Content-type, application/json
 	HEADER: AUTHORIZATION, Bearer + token
 	body: {
 		tipo: "normal", // random, normal
@@ -119,20 +131,26 @@ GET /activities/search // BUSCAR ACTIVIDAD
 
 	respuesta --> 200 // + LISTA DE ACTIVIDADES
 	body: [{
-		_id: "",
-		username: "",
-		nombre: "",
-		descripcion: "",
-		fechaInicio: "",
-		horaInicio: "",
-		fechaFin: "",
-		horaFin: "",
-		categorias: ["categoria", "categoria"],
-		prioridad: "",
-		participantes: ["username", "username"],
-		recordatorio: "fecha",
-		periodicidad: int,
-		estimacion: int,
-		objetivo: "",
-		tipo: ""
+		"_id": "09234jnjksdf987hu",
+		"username": "username",
+    "nombre": "MY FEST",
+		"descripcion": "la mejor fiesta",
+    "fechaInicio": "14/10/2017",
+    "horaInicio": "20:00",
+    "fechaFin": "14/10/2017",
+    "horaFin": "23:00",
+    "categorias": ["fiesta", "locula", "beer"],
+    "prioridad": "alta",
+    "participantes": ["yo"],
+    "recordatorio": "ninguno",
+    "periodicidad": 1,
+    "estimacion": 3,
+    "lugar": "Palermo. Osvaldo 940",
+    "foto": "foto en base 64",
+    "tipo": "privada",
+    "beneficios": [{
+			"precio": 100,
+			"descuento": 10,
+			"descripcion": "hiper descuento"
+		}]
 	}]
