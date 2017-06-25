@@ -102,6 +102,11 @@ module.exports.create = function (activity) {
   return activity.save();
 }
 
+module.exports.updateActivity = function (id, username, updatedActivity) {
+  return Activity.findById(id) // Tendria que ver que onda el tema de seguridad
+  .then((activity) => activity.update(updatedActivity));
+}
+
 module.exports.search = function (params) {
   const query = { $and: [{ $or: [] }, { tipo: 'publica' }] }
   if (params.tipo === 'random') {

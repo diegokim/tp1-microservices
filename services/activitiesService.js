@@ -16,6 +16,8 @@ module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ActivityRepository.getActivitiesByUsername(username))
 ;
 
+module.exports.update = (id, username, activity) => ActivityRepository.updateActivity(id, username, activity)
+
 module.exports.delete = ({ activityId, username }) => Promise.resolve()
   .then(() => ActivityRepository.getActivityById(activityId))
   .then((activ) => {

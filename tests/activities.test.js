@@ -57,6 +57,8 @@ describe('Integration tests', () => {
 		  descripcion: ''
 	  }]
   }
+  const updatedActivity = activity;
+  updatedActivity.descripcion = 'Partidasoo';
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -67,18 +69,40 @@ describe('Integration tests', () => {
 
   describe('Create and get activities', () => {
     let token;
-    it('Create and then get activities should contain the created activity', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+    it('Create and then get activities should contain the created activity', () => registerRequest(newUser)
+      .then(() => authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createActivity(activity, token))
-      .then(()    => getActivities(token))
+      .then(() => createActivity(activity, token))
+      .then(() => getActivities(token))
       .then((res) => {
         const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
           'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
           'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
+    );
+  });
+
+  describe('Update activity', () => {
+    let token;
+    it('Create and then update activities should contain the updated activity', () => {
+      return registerRequest(newUser)
+      .then(() => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(() => createActivity(activity, token))
+      .then(() => getActivities(token))
+      .then((res) => {
+        const id = res.body[0]._id;
+        updateActivity(id, updatedActivity, token);
+      })
+      .then(() => getActivities(token))
+      .then((res) => {
+        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+        assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
+      })
+      }
     );
   });
 
@@ -299,6 +323,13 @@ const getActivities = (token) => Promise.resolve(
   request.get(baseUrl + '/activities')
     .set({'Authorization': token})
     .send()
+);
+
+const updateActivity = (id, activity, token) => Promise.resolve(
+  request.put(baseUrl + '/activities/' + id)
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send(activity)
 );
 
 const searchActivities = (searchParams, token) => Promise.resolve(
