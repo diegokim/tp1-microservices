@@ -99,7 +99,7 @@ describe('Integration tests', () => {
       .then((res) => {
         const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
           'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
         assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
       })
       }
