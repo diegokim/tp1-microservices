@@ -6,20 +6,35 @@ const _ = require('lodash');
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
-describe('Objective tests', () => {
+describe('Integration tests', () => {
   const name = 'diego';
   const username = 'diego123';
+  const username2 = 'lucas123';
   const email = 'diego@gmail.com';
   const password = 'kim';
+  const password2 = 'ludueno';
+  const nacimiento = '10/10/1990'
   const user = {
     username,
     password
+  };
+  const user2 = {
+    username: username2,
+    password: password2
   };
   const newUser = {
     name,
     username,
     email,
-    password
+    password,
+    nacimiento
+  };
+  const newUser2 = {
+    name,
+    username: username2,
+    email,
+    password: password2,
+    nacimiento
   };
   const activity = {
     nombre: 'futbol',
@@ -34,7 +49,7 @@ describe('Objective tests', () => {
     recordatorio: '9/7/2017',
     periodicidad: 1,
     estimacion: 2,
-    objetivo: '5 partidos',
+    foto: 'foto en base 64',
     tipo: 'act',
     beneficios: [{
 		  precio: 10,
@@ -76,6 +91,7 @@ describe('Objective tests', () => {
   describe('Activity and objective binding', () => {
     let token;
     let objId;
+    let activityId;
     it('Create and then get objectives should contain the created objective', () => Promise.resolve()
       .then(()    => registerRequest(newUser))
       .then(()    => authenticateRequest(user))
@@ -84,13 +100,13 @@ describe('Objective tests', () => {
       .then(()    => createObjective(objective, token))
       .then((res) => (objId = res.body._id) )
       .then(() => createActivity(activity,token))
-      .then((res) => addActivityToObjective(objId, res.body._id, token) )
+      .then((res) => (activityId = res.body._id) )
+      .then(() => addActivityToObjective(objId, activityId, token) )
       .then(()    => getObjectives(token))
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
-        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: [activityId]}));
       })
-      .catch((err) => console.log(err.response.error))
     );
   });
 

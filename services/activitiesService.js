@@ -23,3 +23,23 @@ module.exports.activityExists = (activityId) => ActivityRepository.findById(acti
     }
     return Promise.reject();
   })
+
+module.exports.update = (id, username, activity) => ActivityRepository.updateActivity(id, username, activity)
+
+module.exports.delete = ({ activityId, username }) => Promise.resolve()
+  .then(() => ActivityRepository.getActivityById(activityId))
+  .then((activ) => {
+    if (activ) {
+      if (activ.username === username) {
+        return ActivityRepository.delete(activityId);
+      } else {
+        return ActivityRepository.removeFromActivity(activityId, username)
+      }
+    }
+    return Promise.reject({ status: 403, message: 'Unauthorize' });
+  })
+;
+
+module.exports.search = ({ params }) => Promise.resolve()
+	.then(() => ActivityRepository.search(params))
+;

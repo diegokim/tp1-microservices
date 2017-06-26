@@ -19,7 +19,7 @@ https://www.mongodb.com/download-center?jmp=nav#community
 Node JS:
 https://nodejs.org/es/
 
-Una vez que tenemos esto instalado, nos paramos en el directorio raiz y utilizamos el siguiente comando:
+Una vez que tenemos esto instalado, nos paramos en el directorio raiz de este proyecto y utilizamos el siguiente comando:
 
 > $ npm install
 
@@ -30,6 +30,12 @@ Esto instala las dependencias (bibliotecas externas que utiliza el proyecto que 
 Una de las precondiciones que existen para que funcione el servidor es que el demonio de mongodb este corriendo. Para esto yo utilizo:
 
 > $ sudo mongod
+
+Si da este error:
+exception in initAndListen: 29 Data directory /data/db not found., terminating
+
+Ejecutar como root:
+> $ mkdir -p /data/db
 
 Para correr el servidor:
 
@@ -73,7 +79,7 @@ Tipo de mensaje y URI:
     POST /activities
 Headers
 
-	HEADER: AUTHORIZATION, Bearer + token
+	HEADER: AUTHORIZATION, token
 Mensaje:	
 
 	body: {
@@ -89,8 +95,9 @@ Mensaje:
 		recordatorio: "9/7/2017",
 		periodicidad: 0,
 		estimacion: 0,
-		objetivo: "5 partidos",
-		tipo: "",
+		tipo: "publica",
+		lugar: "lugar",
+		foto: "",
 		beneficios: [{
 			precio: 0,
 			descuento: 0,
@@ -108,7 +115,7 @@ Tipo de mensaje y URI:
      GET /activities 
 Headers
  
-	HEADER: AUTHORIZATION, Bearer + token
+	HEADER: AUTHORIZATION, token
 Respuesta
 
 	respuesta --> 200 // + LISTA DE ACTIVIDADES
@@ -127,8 +134,9 @@ Respuesta
 		recordatorio: "fecha",
 		periodicidad: int,
 		estimacion: int,
-		objetivo: "",
-		tipo: ""
+		tipo: "",
+		foto: "",
+		lugar: "lugar"
 	}]
 
 
@@ -138,7 +146,7 @@ Tipo y URI:
     PUT /activities/{id} 
 Headers:
 	
-	HEADER: AUTHORIZATION, Bearer + token
+	HEADER: AUTHORIZATION, token
 Mensaje:
 	
 	body: {
@@ -154,8 +162,9 @@ Mensaje:
 		recordatorio: "fecha",
 		periodicidad: int,
 		estimacion: int,
-		objetivo: "",
 		tipo: "",
+		foto: "",
+		lugar: "lugar",
 		beneficios: [{
 			precio: int,
 			descuento: int,
@@ -166,6 +175,16 @@ Respuesta
 
 	respuesta --> 204
 
+## Borrar una actividad
+Tipo y URI:
+
+    DELETE /activities/{id} 
+Headers:
+
+	HEADER: AUTHORIZATION, token
+Respuesta
+
+	respuesta --> 204
 
 ## Elegir en actividad
 Tipo y URI:
@@ -173,27 +192,27 @@ Tipo y URI:
     PUT /activities/{id}/register 
 Headers:
 
-	HEADER: AUTHORIZATION, Bearer + token
+	HEADER: AUTHORIZATION, token
 Respuesta
 
 	respuesta --> 204
 
 
-## Obtener acrividades
+## Buscar actividades
 Tipo y URI:
 
   GET /activities/search
 Headers
 	
-  HEADER: AUTHORIZATION, Bearer + token
+  HEADER: AUTHORIZATION, token
 Mensaje:
   
 	body: {
 		tipo: "normal", // random, normal
 		texto: "futbol",
 		categorias: ["futbol", "racing"],
-		fechaDesde: "10/7/2018",
-		fechaHasta: "11/7/2018"
+		fechaInicio: "10/7/2018",
+		fechaFin: "11/7/2018"
 	}
 Respuesta:
 
@@ -207,13 +226,14 @@ Respuesta:
 		horaInicio: "",
 		fechaFin: "",
 		horaFin: "",
+		lugar: "lugar",
 		categorias: ["categoria", "categoria"],
 		prioridad: "",
 		participantes: ["username", "username"],
 		recordatorio: "fecha",
 		periodicidad: int,
 		estimacion: int,
-		objetivo: "",
 		tipo: ""
+		foto: ""
 	}]
 

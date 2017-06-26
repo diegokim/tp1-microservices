@@ -9,17 +9,32 @@ const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 describe('Integration tests', () => {
   const name = 'diego';
   const username = 'diego123';
+  const username2 = 'lucas123';
   const email = 'diego@gmail.com';
   const password = 'kim';
+  const password2 = 'ludueno';
+  const nacimiento = '10/10/1990'
   const user = {
     username,
     password
+  };
+  const user2 = {
+    username: username2,
+    password: password2
   };
   const newUser = {
     name,
     username,
     email,
-    password
+    password,
+    nacimiento
+  };
+  const newUser2 = {
+    name,
+    username: username2,
+    email,
+    password: password2,
+    nacimiento
   };
   const activity = {
     nombre: 'futbol',
@@ -34,7 +49,7 @@ describe('Integration tests', () => {
     recordatorio: '9/7/2017',
     periodicidad: 1,
     estimacion: 2,
-    objetivo: '5 partidos',
+    foto: 'foto en base 64',
     tipo: 'act',
     beneficios: [{
 		  precio: 10,
@@ -42,6 +57,8 @@ describe('Integration tests', () => {
 		  descripcion: ''
 	  }]
   }
+  const updatedActivity = activity;
+  updatedActivity.descripcion = 'Partidasoo';
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -52,51 +69,247 @@ describe('Integration tests', () => {
 
   describe('Create and get activities', () => {
     let token;
-    it('Create and then get activities should contain the created activity', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+    it('Create and then get activities should contain the created activity', () => registerRequest(newUser)
+      .then(() => authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createActivity(activity, token))
-      .then(()    => getActivities(token))
+      .then(() => createActivity(activity, token))
+      .then(() => getActivities(token))
       .then((res) => {
         const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
           'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'objetivo', 'tipo', 'beneficios', 'username']);
+          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
     );
   });
 
-  describe('Register into activity', () => {
+  describe('Update activity', () => {
     let token;
-    it('Create and then get activity should return the same', () => Promise.resolve()
+    it('Create and then update activities should contain the updated activity', () => {
+      return registerRequest(newUser)
+      .then(() => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(() => createActivity(activity, token))
+      .then(() => getActivities(token))
+      .then((res) => {
+        const id = res.body[0]._id;
+        updateActivity(id, updatedActivity, token);
+      })
+      .then(() => getActivities(token))
+      .then((res) => {
+        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
+        assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
+      })
+      }
+    );
+  });
+
+  describe('Delete activity', () => {
+    let token;
+    let token2;
+    let activityId;
+    it('Create and then delete activity should delete activity', () => Promise.resolve()
       .then(()    => registerRequest(newUser))
       .then(()    => authenticateRequest(user))
       .then((res) => (token = res.body.token))
       .then(()    => createActivity(activity, token))
-      .then((res) => registerInActivity(res.body._id, token))
+      .then((res) => deleteActivity(res.body._id, token))
+      .then(()    => getActivities(token))
+      .then((res) => assert.deepEqual(res.body, []))
+    );
+
+    it('Create and then delete activity from other user should remove this user from this activity',
+            ()    => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => registerRequest(newUser2))
+      .then((res) => (token2 = res.body.token))
+      .then(()    => createActivity(activity, token))
+      .then((res) => {
+        activityId = res.body._id;
+        return registerInActivity(activityId, token2)
+      })
+      .then(()    => getActivities(token2))
+      .then((res) => {
+        const participants = res.body[0].participantes;
+        const expectedParticipants = activity.participantes;
+        expectedParticipants.push(username2)
+        assert.deepEqual(expectedParticipants, participants)
+      })
+      .then(()    => deleteActivity(activityId, token2))
+      .then(()    => getActivities(token2))
+      .then((res) => assert.deepEqual([], res.body))
+      .then(()    => getActivities(token))
+      .then((res) => assert.deepEqual(res.body.length, 1))
+    );
+  });
+
+  describe('Register into activity', () => {
+    let token;
+    let token2;
+    it('Create and then get activity should return the same', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then((res) => (token = res.body.token))
+      .then(()    => registerRequest(newUser2))
+      .then((res) => (token2 = res.body.token))
+      .then(()    => createActivity(activity, token))
+      .then((res) => {
+        return registerInActivity(res.body._id, token)
+        .then(() => registerInActivity(res.body._id, token2))
+      })
       .then(()    => getActivities(token))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
         const expectedParticipants = activity.participantes;
         expectedParticipants.push(username)
+        expectedParticipants.push(username2)
         assert.deepEqual(expectedParticipants, newParticipants)
       })
+      .then(()    => getActivities(token2))
+      .then((res) => {
+        const newParticipants = res.body[0].participantes;
+        assert.deepEqual( activity.participantes, newParticipants)
+      })
     );
+  });
+
+  describe('Search activities', () => {
+    let searchParams;
+    let expectedActivities;
+    const activityList = [
+      Object.assign({}, activity, { fechaInicio: '1/1/2017', fechaFin: '1/1/2017', nombre: 'act futbol', tipo: 'privada', descripcion: 'partido de futbol', categorias: ['futbol', 'pelota'] }),
+      Object.assign({}, activity, { fechaInicio: '2/2/2017', fechaFin: '2/2/2017', nombre: 'act fiesta', tipo: 'publica',descripcion: 'fiesta punchi punchi', categorias: ['fiesta', 'locura', 'alcohol'] }),
+      Object.assign({}, activity, { fechaInicio: '3/3/2017', fechaFin: '3/3/2017', nombre: 'act zapatillas', tipo: 'publica',descripcion: 'compra zapatillas ML trabajo', categorias: ['zapatillas', 'moda', 'ML'] }),
+      Object.assign({}, activity, { fechaInicio: '4/4/2017', fechaFin: '4/4/2017', nombre: 'act trabajo', tipo: 'publica',descripcion: 'trabajo duro como un esclavo', categorias: ['trabajo', 'desempleo'] }),
+      Object.assign({}, activity, { fechaInicio: '5/5/2017', fechaFin: '5/5/2017', nombre: 'act racing', tipo: 'publica',descripcion: 'partido de racing', categorias: ['futbol', 'racing'] })
+    ]
+
+    describe('fechaFin', () => {
+      beforeEach(() => {
+        searchParams = {
+          fechaFin: '1/2/2017'
+        };
+        expectedActivities = [];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('fechaInicio', () => {
+      beforeEach(() => {
+        searchParams = {
+          fechaInicio: '1/2/2017'
+        };
+        expectedActivities = [activityList[1], activityList[2], activityList[3], activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto (1)', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'racing'
+        };
+        expectedActivities = [activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto (2)', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'no-match'
+        };
+        expectedActivities = [];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('texto matching public and private activities', () => {
+      beforeEach(() => {
+        searchParams = {
+          texto: 'futbol'
+        };
+        expectedActivities = [activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('categories (1)', () => {
+      beforeEach(() => {
+        searchParams = {
+          categorias: ['alcohol', 'desempleo']
+        };
+        expectedActivities = [activityList[1], activityList[3]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('categories (2)', () => {
+      beforeEach(() => {
+        searchParams = {
+          categorias: ['trabajo']
+        };
+        expectedActivities = [activityList[2], activityList[3]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    describe('random', () => {
+      beforeEach(() => {
+        searchParams = {
+          tipo: 'random'
+        };
+        expectedActivities = [activityList[0], activityList[1], activityList[2], activityList[3], activityList[4]];
+      });
+
+      it('should return the expected activities', () => searchAndCompareActivities(searchParams, expectedActivities))
+    })
+
+    const searchAndCompareActivities = (searchParams, expectedActivities) => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => createActivity(activityList[0], token))
+      .then(()    => createActivity(activityList[1], token))
+      .then(()    => createActivity(activityList[2], token))
+      .then(()    => createActivity(activityList[3], token))
+      .then(()    => createActivity(activityList[4], token))
+      .then((res) => searchActivities(searchParams, token))
+      .then((res) => compareActivities(res.body, expectedActivities))
   });
 });
 
 //  AUXILIAR FUNCTIONS
-const registerRequest = (newUser) => Promise.resolve(
+const registerRequest = (regUser) => Promise.resolve(
   request.post(baseUrl + '/users/register')
     .set({'content-type': 'application/json'})
-    .send(newUser)
+    .send(regUser)
 );
 
-const authenticateRequest = (user) => Promise.resolve(
+const compareActivities = (givenAct, expectedAct) => {
+  for (const activ of givenAct) {
+    delete activ._id;
+    delete activ.__v;
+    delete activ.username;
+  }
+
+  assert.deepEqual(givenAct, expectedAct);
+}
+
+const authenticateRequest = (authUser) => Promise.resolve(
   request.post(baseUrl + '/users/authenticate')
     .set({'content-type': 'application/json'})
-    .send(user)
+    .send(authUser)
 );
 
 const createActivity = (activity, token) => Promise.resolve(
@@ -112,8 +325,29 @@ const getActivities = (token) => Promise.resolve(
     .send()
 );
 
+const updateActivity = (id, activity, token) => Promise.resolve(
+  request.put(baseUrl + '/activities/' + id)
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send(activity)
+);
+
+const searchActivities = (searchParams, token) => Promise.resolve(
+  request.post(baseUrl + '/activities/search')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send(searchParams)
+);
+
 const registerInActivity = (id, token) => Promise.resolve(
   request.put(baseUrl + '/activities/' + id + '/register')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send()
+);
+
+const deleteActivity = (id, token) => Promise.resolve(
+  request.delete(baseUrl + '/activities/' + id)
     .set({'content-type': 'application/json'})
     .set({'Authorization': token})
     .send()

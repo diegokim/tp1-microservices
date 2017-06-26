@@ -9,6 +9,9 @@ const activitiesRoutes = require('./routes/activitiesRoutes');
 const objectivesRoutes = require('./routes/objectivesRoutes')
 const database = require('./wrappers/database');
 
+// eslint-disable-next-line
+const mockData = require('./mocks/mockData')
+
 const app = express();
 
 const port = process.env.PORT || 8080; // EN GENERAL TODAS LAS VARIABLES DE CONFIGURACION VAN EN UN ARCHIVO CONFIG.JSON
@@ -48,3 +51,5 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log('Server started at port ' + port);
 });
+
+// mockData.startMocking(database);

@@ -11,7 +11,15 @@ module.exports.isValidActivity = (activity) => (
   activity.recordatorio &&
   activity.periodicidad &&
   activity.estimacion &&
-  activity.objetivo &&
+  activity.foto &&
   activity.tipo &&
   activity.beneficios
+);
+
+module.exports.isValidSearch = (params) => (
+  params.tipo ||
+  params.texto ||
+  params.categorias ||
+  params.fechaInicio ||
+  params.fechaFin
 );

@@ -19,9 +19,13 @@ module.exports.addActivity = ({username, objectiveId}, activityId) => Promise.re
   .then(() => ActivityService.activityExists(activityId))
   .then(() => ObjectiveRepository.getObjectiveBy({username, objectiveId}))
   .then((objective) => {
-    const newActividades = objective.actividades;
-    newActividades.push(actividadId);
-    objective.update({actividades: newActividades})
+    if (objective) {
+      const newActividades = objective[0].actividades;
+      newActividades.push(activityId);
+      return objective[0].update({actividades: newActividades})
+    } else {
+      return Promise.reject({ status: 403, message: 'Unauthorize' });
+    }
   })
   .catch((err) => {
     console.log(err)
