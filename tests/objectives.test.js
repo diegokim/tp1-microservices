@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
-describe('Integration tests', () => {
+describe('Objective Tests', () => {
   const name = 'diego';
   const username = 'diego123';
   const username2 = 'lucas123';
@@ -84,7 +84,6 @@ describe('Integration tests', () => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
         assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
       })
-
     );
   });
 
@@ -110,6 +109,26 @@ describe('Integration tests', () => {
     );
   });
 
+
+  describe('Delete objective', () => {
+    let token;
+    it('Creating, getting and deleting an objective should make the next call to get objectives return an empty array', () => Promise.resolve()
+      .then(()    => registerRequest(newUser))
+      .then(()    => authenticateRequest(user))
+      .then((res) => (token = res.body.token))
+      .then(()    => createObjective(objective, token))
+      .then(()    => getObjectives(token))
+      .then((res) => {
+        const createdObjectiveId = res.body[0]._id;
+        deleteObjective(createdObjectiveId,token)})
+      .then(()    => getObjectives(token))
+      .then((res) => {
+        const createdObjectives = res.body
+        console.log(createdObjectives)
+        assert.equal(createdObjectives.length, 0);
+      })
+    );
+  });
 //  End of Test case
 });
 
@@ -158,6 +177,13 @@ const getActivities = (token) => Promise.resolve(
     .set({'Authorization': token})
     .send()
 );
+
+const deleteObjective = (objectiveId, token) => Promise.resolve(
+  request.delete(baseUrl + '/objectives/' + objectiveId )
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': token})
+    .send()
+)
 
 const registerInActivity = (id, token) => Promise.resolve(
   request.put(baseUrl + '/activities/' + id + '/register')

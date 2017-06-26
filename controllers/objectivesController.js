@@ -15,12 +15,12 @@ module.exports.create = (req, res) => {
   	.catch((err) => res.status(err.status).json(err.message));
 };
 
-module.exports.addActivity = (req, res) => {
+module.exports.addActivityToObjective = (req, res) => {
   const username = req.user.username
   const objectiveId = req.params.objectiveId
   const activityId = req.body.activityId;
 
-  return objectivesService.addActivity({ username, objectiveId }, activityId)
+  return objectivesService.addActivityToObjective({ username, objectiveId }, activityId)
 		.then(() => res.status(204).send())
 		.catch((err) => res.status(err.status).json(err.message));
 };
@@ -31,3 +31,14 @@ module.exports.list = (req, res) => {
 		.then((objective) => res.status(200).json(objective))
 		.catch((err) => res.status(err.status).json(err.message));
 };
+
+module.exports.delete = (req, res) => {
+  const username = req.user.username;
+  const objectiveId = req.params.objectiveId
+  return objectivesService.delete(objectiveId, username)
+  .then(() => res.status(200))
+  .catch((err) => {
+    console.log(err)
+    res.status(403).json('Unauthorize')
+  })
+}

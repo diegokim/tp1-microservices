@@ -38,3 +38,23 @@ module.exports.getObjectivesByUsername = function (username) {
 module.exports.create = function (objective) {
   return objective.save();
 }
+
+module.exports.addActivityToObjective = function ({username, objectiveId}, activityId) {
+  return this.getObjectiveBy({username, objectiveId})
+  .then((objective) => {
+    if (objective) {
+      const newActividades = objective[0].actividades;
+      newActividades.push(activityId);
+      return objective[0].update({actividades: newActividades})
+    } else {
+      console.log('Objective not found in addActivityToObjective')
+      return Promise.reject('Unauthorize'); //Esta bien devolver esto aca?
+    }
+  })
+}
+
+module.exports.delete = (id) => {
+  console.log(id)
+  const query = { _id: id };
+  return Objective.remove(query);
+}

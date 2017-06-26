@@ -15,19 +15,24 @@ module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ObjectiveRepository.getObjectivesByUsername(username))
 ;
 
-module.exports.addActivity = ({username, objectiveId}, activityId) => Promise.resolve()
-  .then(() => ActivityService.activityExists(activityId))
-  .then(() => ObjectiveRepository.getObjectiveBy({username, objectiveId}))
-  .then((objective) => {
-    if (objective) {
-      const newActividades = objective[0].actividades;
-      newActividades.push(activityId);
-      return objective[0].update({actividades: newActividades})
-    } else {
-      return Promise.reject({ status: 403, message: 'Unauthorize' });
-    }
-  })
+module.exports.addActivityToObjective = ({username, objectiveId}, activityId) => Promise.resolve()
+  .then(() => ActivityService.activityExists(activityId)) //Es necesario que la actividad sea del user con username??
+  .then(() => ObjectiveRepository.addActivityToObjective({username, objectiveId}, activityId))
   .catch((err) => {
     console.log(err)
     Promise.reject({ status: 409, message: err })
   });
+
+module.exports.delete = (objectiveId, username) => Promise.resolve()
+  .then(() => ObjectiveRepository.getObjectiveById(objectiveId))
+  .then((objective) => {
+    if (objective) {
+      if (objective.username === username) {
+        return ObjectiveRepository.delete(objectiveId);
+      } else {
+        return Promise.reject({ status: 403, message: 'Unauthorize' });
+      }
+    } else {
+      return Promise.reject({ status: 403, message: 'Unauthorize' });
+    }
+  })
