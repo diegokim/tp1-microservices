@@ -58,3 +58,20 @@ module.exports.delete = (id) => {
   const query = { _id: id };
   return Objective.remove(query);
 }
+
+module.exports.removeActivityFromObjective = function (objectiveId, activityId) {
+  return Objective.findById(objectiveId)
+   .then((objective) => {
+     if (objective) {
+       const activities = objective.actividades;
+       const activityIndex = activities.indexOf(activityId);
+       if (activityIndex > -1) {
+         activities.splice(activityIndex, 1);
+       }
+       return objective.update({actividades: activities})
+     } else {
+       return Promise.reject('removeActivityFromObjective: User not found');
+     }
+   })
+   .catch(() => Promise.reject('removeActivityFromObjective: findByIdError'))
+}

@@ -36,3 +36,19 @@ module.exports.delete = (objectiveId, username) => Promise.resolve()
       return Promise.reject({ status: 403, message: 'Unauthorize' });
     }
   })
+
+module.exports.removeActivityFromObjective = ({username, objectiveId, activityId}) => Promise.resolve()
+  .then(() => ActivityService.activityExists(activityId))
+  .then(() => ObjectiveRepository.getObjectiveById(objectiveId))
+  .then((objective) => {
+    if (objective) {
+      if (objective.username === username) {
+        return ObjectiveRepository.removeActivityFromObjective(objectiveId, activityId);
+      } else {
+        return Promise.reject({ status: 403, message: 'Unauthorize' });
+      }
+    } else {
+      return Promise.reject({ status: 403, message: 'Unauthorize' });
+    }
+  })
+  .catch(() => Promise.reject({ status: 403, message: 'Unauthorize' }))

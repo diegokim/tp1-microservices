@@ -24,4 +24,8 @@ router.get('/objectives', passport.authenticate('jwt', {'session': false}), (req
 // Delete
 router.delete('/objectives/:objectiveId', passport.authenticate('jwt', {'session': false}), (req, res) => objectivesController.delete(req, res))
 
+//  Remove activity from objective
+router.delete('/objectives/:objectiveId/:activityId', passport.authenticate('jwt', {'session': false}),
+ (req, res) => objectivesController.removeActivityFromObjective(req, res))
+
 module.exports = router;

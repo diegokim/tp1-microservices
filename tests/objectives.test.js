@@ -1,68 +1,25 @@
 /* eslint-disable */
 const assert = require('chai').assert;
-const request = require('superagent');
 const DB = require('../wrappers/database');
 const _ = require('lodash');
+const prefabs = require('./requests/prefabs.requests.js')
+const authReq = require('./requests/auth.requests.js')
+const actReq = require('./requests/activities.requests.js')
+const objReq = require('./requests/objectives.requests.js')
 
-const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Objective Tests', () => {
-  const name = 'diego';
-  const username = 'diego123';
-  const username2 = 'lucas123';
-  const email = 'diego@gmail.com';
-  const password = 'kim';
-  const password2 = 'ludueno';
-  const nacimiento = '10/10/1990'
-  const user = {
-    username,
-    password
-  };
-  const user2 = {
-    username: username2,
-    password: password2
-  };
-  const newUser = {
-    name,
-    username,
-    email,
-    password,
-    nacimiento
-  };
-  const newUser2 = {
-    name,
-    username: username2,
-    email,
-    password: password2,
-    nacimiento
-  };
-  const activity = {
-    nombre: 'futbol',
-	  descripcion: 'partido de futbol',
-    fechaInicio: '10/7/2017',
-    horaInicio: '12:00',
-    fechaFin: '10/7/2017',
-    horaFin: '13:00',
-    categorias: ['futbol', 'pelota', 'racing'],
-    prioridad: 'alta',
-    participantes: ['diego', 'juanma', 'lautaro', 'hugo'],
-    recordatorio: '9/7/2017',
-    periodicidad: 1,
-    estimacion: 2,
-    foto: 'foto en base 64',
-    tipo: 'act',
-    beneficios: [{
-		  precio: 10,
-		  descuento: 10,
-		  descripcion: ''
-	  }]
-  }
 
-  const objective = {
-  	nombre: 'Dejar de fumar',
-  	descripcion: 'El pucho me esta haciendo mal',
-  	categorias: ['Salud']
-  }
+  const objective = prefabs.objective;
+  const user = prefabs.user;
+  const username = user.username;
+  const user2 = prefabs.user2;
+  const username2 = user2.username;
+  const newUser = prefabs.newUser;
+  const newUser2 = prefabs.newUser2;
+  const activity = prefabs.activity;
+  const updatedActivity = prefabs.updatedActivity;
+
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -75,11 +32,11 @@ describe('Objective Tests', () => {
   describe('Create and get objectives', () => {
     let token;
     it('Create and then get objectives should contain the created objective', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createObjective(objective, token))
-      .then(()    => getObjectives(token))
+      .then(()    => objReq.createObjective(objective, token))
+      .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
         assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
@@ -92,16 +49,16 @@ describe('Objective Tests', () => {
     let objId;
     let activityId;
     it('Create and then get objectives should contain the created objective', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => token = res.body.token)
       .then(() => token ? Promise.resolve() : Promise.reject())
-      .then(()    => createObjective(objective, token))
+      .then(()    => objReq.createObjective(objective, token))
       .then((res) => (objId = res.body._id) )
-      .then(() => createActivity(activity,token))
+      .then(() => actReq.createActivity(activity,token))
       .then((res) => (activityId = res.body._id) )
-      .then(() => addActivityToObjective(objId, activityId, token) )
-      .then(()    => getObjectives(token))
+      .then(() => objReq.addActivityToObjective(objId, activityId, token) )
+      .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
         assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: [activityId]}));
@@ -113,15 +70,16 @@ describe('Objective Tests', () => {
   describe('Delete objective', () => {
     let token;
     it('Creating, getting and deleting an objective should make the next call to get objectives return an empty array', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createObjective(objective, token))
-      .then(()    => getObjectives(token))
+      .then(() => token ? Promise.resolve() : Promise.reject())
+      .then(()    => objReq.createObjective(objective, token))
+      .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjectiveId = res.body[0]._id;
-        deleteObjective(createdObjectiveId,token)})
-      .then(()    => getObjectives(token))
+        objReq.deleteObjective(createdObjectiveId,token)})
+      .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjectives = res.body
         console.log(createdObjectives)
@@ -129,65 +87,31 @@ describe('Objective Tests', () => {
       })
     );
   });
+
+  describe('Remove activity from objective', () => {
+    let token;
+    let objId;
+    let activityId;
+    it('should be updated at the next getObjectives', () => Promise.resolve()
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
+      .then((res) => token = res.body.token)
+      .then(() => token ? Promise.resolve() : Promise.reject())
+      .then(()    => objReq.createObjective(objective, token))
+      .then((res) => (objId = res.body._id) )
+      .then(() => objId ? Promise.resolve() : Promise.reject())
+      .then(() => actReq.createActivity(activity,token))
+      .then((res) => (activityId = res.body._id) )
+      .then(() => objReq.addActivityToObjective(objId, activityId, token) )
+      .then(() => objReq.removeActivityFromObjective(objId, activityId, token))
+      .then(()    => objReq.getObjectives(token))
+      .then((res) => {
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
+        console.log(createdObjective)
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: [activityId]}));
+      })
+    );
+  });
+
 //  End of Test case
 });
-
-//  AUXILIAR FUNCTIONS
-const registerRequest = (newUser) => Promise.resolve(
-  request.post(baseUrl + '/users/register')
-    .set({'content-type': 'application/json'})
-    .send(newUser)
-);
-
-const authenticateRequest = (user) => Promise.resolve(
-  request.post(baseUrl + '/users/authenticate')
-    .set({'content-type': 'application/json'})
-    .send(user)
-);
-
-const createActivity = (activity, token) => Promise.resolve(
-  request.post(baseUrl + '/activities')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send(activity)
-);
-
-const createObjective = (objective, token) => Promise.resolve(
-  request.post(baseUrl + '/objectives')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send(objective)
-);
-
-const addActivityToObjective = (objectiveId, activityId, token) => Promise.resolve(
-  request.put(baseUrl + '/objectives/' + objectiveId)
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send({ activityId })
-);
-
-const getObjectives = (token) => Promise.resolve(
-  request.get(baseUrl + '/objectives')
-    .set({'Authorization': token})
-    .send()
-);
-
-const getActivities = (token) => Promise.resolve(
-  request.get(baseUrl + '/activities')
-    .set({'Authorization': token})
-    .send()
-);
-
-const deleteObjective = (objectiveId, token) => Promise.resolve(
-  request.delete(baseUrl + '/objectives/' + objectiveId )
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send()
-)
-
-const registerInActivity = (id, token) => Promise.resolve(
-  request.put(baseUrl + '/activities/' + id + '/register')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send()
-);
