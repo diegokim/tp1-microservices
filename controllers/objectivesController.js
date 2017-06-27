@@ -36,7 +36,7 @@ module.exports.delete = (req, res) => {
   const username = req.user.username;
   const objectiveId = req.params.objectiveId
   return objectivesService.delete(objectiveId, username)
-  .then(() => res.status(200))
+  .then(() => res.sendStatus(200))
   .catch((err) => {
     console.log(err)
     res.status(403).json('Unauthorize')
@@ -49,9 +49,9 @@ module.exports.removeActivityFromObjective = (req, res) => {
   const objectiveId = req.params.objectiveId;
   const activityId = req.params.activityId;
   return objectivesService.removeActivityFromObjective({username, objectiveId, activityId})
-  .then(() => res.status(200))
+  .then(() => res.sendStatus(200))
   .catch((err) => {
     console.log(err)
-    res.status(403).json(message);
+    res.status(err.status).json(err.message);
   })
 }

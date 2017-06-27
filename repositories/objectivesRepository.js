@@ -64,7 +64,9 @@ module.exports.removeActivityFromObjective = function (objectiveId, activityId) 
    .then((objective) => {
      if (objective) {
        const activities = objective.actividades;
+       console.log(activities)
        const activityIndex = activities.indexOf(activityId);
+       console.log(activityIndex)
        if (activityIndex > -1) {
          activities.splice(activityIndex, 1);
        }

@@ -12,3 +12,10 @@ module.exports.authenticateRequest = (user) => Promise.resolve(
     .set({'content-type': 'application/json'})
     .send(user)
 );
+
+module.exports.getProfileRequest = (jwt) => Promise.resolve(
+  request.get(baseUrl + '/users/profile')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': jwt})
+    .send()
+);

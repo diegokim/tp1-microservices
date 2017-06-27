@@ -1,12 +1,10 @@
 const assert = require('chai').assert;
-const request = require('superagent');
 const DB = require('../wrappers/database');
 const prefabs = require('./requests/prefabs.requests.js')
+const authReq = require('./requests/auth.requests.js')
 
 // eslint-disable-next-line
 const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEVANTAR LA APLICACION ASI
-
-const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
   const user = prefabs.user;
@@ -20,7 +18,7 @@ describe('Integration tests', () => {
   });
 
   describe('Register', () => {
-    it('POST to /users/register with a correct user', () => registerRequest(newUser)
+    it('POST to /users/register with a correct user', () => authReq.registerRequest(newUser)
       .then((res) => {
         assert.equal(res.status, 201);
         assert.include(res.body, newUser);
@@ -28,16 +26,16 @@ describe('Integration tests', () => {
   });
 
   describe('Authenticate', () => {
-    it('Wrong username should return not found', () => authenticateRequest(user)
+    it('Wrong username should return not found', () => authReq.authenticateRequest(user)
       .catch((res) => {
         assert.equal(res.status, 404);
         assert.equal(res.message, 'Not Found');
       }));
 
-    it('Auth with a correct username and password should return a token', () => registerRequest(newUser)
+    it('Auth with a correct username and password should return a token', () => authReq.registerRequest(newUser)
       .then((res) => {
         assert.deepProperty(res.body, 'token');
-        return authenticateRequest(user)
+        return authReq.authenticateRequest(user)
       })
       .then((res) => {
         assert.equal(res.status, 200);
@@ -46,38 +44,18 @@ describe('Integration tests', () => {
   });
 
   describe('Profile', () => {
-    it('With no Token it should give unauthorized status (401)', () => getProfileRequest('asdasd')
+    it('With no Token it should give unauthorized status (401)', () => authReq.getProfileRequest('asdasd')
       .catch((res) => {
         assert.equal(res.status, 401);
         assert.equal(res.message, 'Unauthorized');
       }));
 
-    it('With a correct Token it should give success true', () => registerRequest(newUser)
-      .then(() => authenticateRequest(user))
-      .then((res) => getProfileRequest(res.body.token))
+    it('With a correct Token it should give success true', () => authReq.registerRequest(newUser)
+      .then(() => authReq.authenticateRequest(user))
+      .then((res) => authReq.getProfileRequest(res.body.token))
       .then((res) => {
         assert.equal(res.status, 200);
         assert.equal(res.body.success, true);
       }));
   });
 });
-
-//  AUXILIAR FUNCTIONS
-const registerRequest = (newUser) => Promise.resolve(
-  request.post(baseUrl + '/users/register')
-    .set({'content-type': 'application/json'})
-    .send(newUser)
-);
-
-const authenticateRequest = (user) => Promise.resolve(
-  request.post(baseUrl + '/users/authenticate')
-    .set({'content-type': 'application/json'})
-    .send(user)
-);
-
-const getProfileRequest = (jwt) => Promise.resolve(
-  request.get(baseUrl + '/users/profile')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': jwt})
-    .send()
-);
