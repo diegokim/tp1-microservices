@@ -78,7 +78,7 @@ describe('Objective Tests', () => {
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjectiveId = res.body[0]._id;
-        objReq.deleteObjective(createdObjectiveId,token)})
+        return objReq.deleteObjective(createdObjectiveId,token)})
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjectives = res.body
