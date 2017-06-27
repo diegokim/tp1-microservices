@@ -47,14 +47,12 @@ module.exports.addActivityToObjective = function ({username, objectiveId}, activ
       newActividades.push(activityId);
       return objective[0].update({actividades: newActividades})
     } else {
-      console.log('Objective not found in addActivityToObjective')
-      return Promise.reject('Unauthorize'); //Esta bien devolver esto aca?
+      return Promise.reject('Objective not found in addActivityToObjective'); //Esta bien devolver esto aca?
     }
   })
 }
 
 module.exports.delete = (id) => {
-  console.log(id)
   const query = { _id: id };
   return Objective.remove(query);
 }
@@ -64,9 +62,7 @@ module.exports.removeActivityFromObjective = function (objectiveId, activityId) 
    .then((objective) => {
      if (objective) {
        const activities = objective.actividades;
-       console.log(activities)
        const activityIndex = activities.indexOf(activityId);
-       console.log(activityIndex)
        if (activityIndex > -1) {
          activities.splice(activityIndex, 1);
        }

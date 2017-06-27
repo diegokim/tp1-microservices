@@ -3,13 +3,14 @@ const passport = require('passport');
 const router = express.Router();
 const activitiesController = require('../controllers/activitiesController');
 const validator = require('../validators/activityValidator');
+const aux = require('../utils/auxiliar.functions.js')
 
 //  Add activity
 router.post('/activities', passport.authenticate('jwt', {'session': false}), (req, res) => {
   if (validator.isValidActivity(req.body)) {
     return activitiesController.create(req, res);
   }
-  res.status(400).json({ message: 'Missing params' });
+  aux.onError('Add Activity', res, {status: 400, message: 'Missing params'})
 });
 
 //  Get activities
@@ -29,7 +30,7 @@ router.post('/activities/search', passport.authenticate('jwt', {'session': false
   if (validator.isValidSearch(req.body)) {
     return activitiesController.search(req, res);
   }
-  res.status(400).json({ message: 'Missing params' });
+  aux.onError('Activities Search', res, {status: 400, message: 'Missing params'})
 });
 
 module.exports = router;

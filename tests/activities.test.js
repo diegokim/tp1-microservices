@@ -21,6 +21,10 @@ describe('Integration tests', () => {
   const activity = prefabs.activity;
   const updatedActivity = prefabs.updatedActivity;
 
+  const activityFields = ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+    'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+    'estimacion', 'foto', 'tipo', 'beneficios', 'username', 'completada'];
+
 	// Leave the database in a valid state
   beforeEach((done) => {
     DB.drop()
@@ -36,9 +40,7 @@ describe('Integration tests', () => {
       .then(() => actReq.createActivity(activity, token))
       .then(() => actReq.getActivities(token))
       .then((res) => {
-        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
-          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
+        const createdActivity = _.pick(res.body[0], activityFields);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
     );
@@ -58,9 +60,7 @@ describe('Integration tests', () => {
       })
       .then(() => actReq.getActivities(token))
       .then((res) => {
-        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
-          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
+        const createdActivity = _.pick(res.body[0], activityFields);
         assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
       })
       }

@@ -49,6 +49,9 @@ const ActivitySchema = mongoose.Schema({
   },
   username: {
     type: String
+  },
+  completada: {
+    type: Boolean
   }
 })
 

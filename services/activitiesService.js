@@ -21,7 +21,7 @@ module.exports.activityExists = (activityId) => ActivityRepository.findById(acti
     if (activity) {
       return Promise.resolve();
     }
-    return Promise.reject();
+    return Promise.reject('Activity not exists');
   })
 
 module.exports.update = (id, username, activity) => ActivityRepository.updateActivity(id, username, activity)

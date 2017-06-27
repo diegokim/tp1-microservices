@@ -48,7 +48,8 @@ const activity = {
     precio: 10,
     descuento: 10,
     descripcion: ''
-  }]
+  }],
+  completada: false
 }
 
 module.exports.activity = activity;

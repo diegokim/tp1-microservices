@@ -13,7 +13,8 @@ module.exports.isValidActivity = (activity) => (
   activity.estimacion &&
   activity.foto &&
   activity.tipo &&
-  activity.beneficios
+  activity.beneficios &&
+  (activity.completada !== null)
 );
 
 module.exports.isValidSearch = (params) => (
