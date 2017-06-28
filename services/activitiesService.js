@@ -1,4 +1,5 @@
 const ActivityRepository = require('../repositories/activitiesRepository');
+const ObjetiveRepository = require('../repositories/objectivesRepository');
 
 module.exports.create = ({ activity, username }) => {
   const newActivity = new ActivityRepository(Object.assign({}, activity, { username }));
@@ -38,6 +39,7 @@ module.exports.delete = ({ activityId, username }) => Promise.resolve()
     }
     return Promise.reject({ status: 403, message: 'Unauthorize' });
   })
+  .then(() => ObjetiveRepository.deleteActivityFromAll(activityId))
 ;
 
 module.exports.search = ({ params }) => Promise.resolve()

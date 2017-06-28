@@ -66,7 +66,6 @@ describe('Objective Tests', () => {
     );
   });
 
-
   describe('Delete objective', () => {
     let token;
     it('Creating, getting and deleting an objective should make the next call to get objectives return an empty array', () => Promise.resolve()
@@ -107,6 +106,34 @@ describe('Objective Tests', () => {
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
         assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
+      })
+    );
+  });
+
+  describe.only('Remove activity should remove it from objetive', () => {
+    let token;
+    let objId;
+    let activityId;
+    it('should be updated at the next getObjectives', () => Promise.resolve()
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
+      .then((res) => token = res.body.token)
+      .then(()    => token ? Promise.resolve() : Promise.reject())
+      .then(()    => objReq.createObjective(objective, token))
+      .then((res) => (objId = res.body._id) )
+      .then(()    => objId ? Promise.resolve() : Promise.reject())
+      .then(()    => actReq.createActivity(activity,token))
+      .then((res) => (activityId = res.body._id))
+      .then(()    => actReq.deleteActivity(activityId, token))
+      .then(()    => objReq.getObjectives(token))
+      .then((res) => {
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: []}));
+      })
+      .then(() => actReq.getActivities(token))
+      .then((res) => {
+        const activities = res.body;
+        assert.isTrue(activities.length === 0)
       })
     );
   });

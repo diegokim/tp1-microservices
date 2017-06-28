@@ -73,3 +73,23 @@ module.exports.removeActivityFromObjective = function (objectiveId, activityId) 
    })
    .catch(() => Promise.reject('removeActivityFromObjective: findByIdError'))
 }
+
+module.exports.deleteActivityFromAll = function (activityId) {
+  const regex = new RegExp('.*' + activityId + '.*');
+  const query = { actividades: { $regex: regex } }
+
+  return Objective.find(query)
+    .then((objetives) => {
+      const promises = [];
+      objetives.forEach((objetive) => {
+        const activities = objetive.actividades;
+        const activityIndex = activities.indexOf(activityId);
+        if (activityIndex > -1) {
+          activities.splice(activityIndex, 1);
+        }
+        promises.push(objective.update({ actividades: activities }))
+      });
+      return Promise.all(promises);
+    })
+    .catch(() => Promise.reject('deleteActivityFromAll: findError'))
+}
