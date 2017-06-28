@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const activitiesService = require('../services/activitiesService');
+const aux = require('../utils/auxiliar.functions.js')
 
 module.exports.create = (req, res) => {
   const activity = _.pick(req.body, [
@@ -17,14 +18,15 @@ module.exports.create = (req, res) => {
     'estimacion',
     'foto',
     'tipo',
-    'beneficios'
+    'beneficios',
+    'completada'
   ])
 
   const username = req.user.username
 
   return activitiesService.create({ activity, username })
 	  .then((createdActivity) => res.status(201).json(createdActivity))
-  	.catch((err) => res.status(err.status).json(err.message));
+  	.catch((err) => aux.onError('Activities create', res, err));
 };
 
 module.exports.register = (req, res) => {
@@ -32,14 +34,14 @@ module.exports.register = (req, res) => {
   const activityId = req.params.activityId
   return activitiesService.register({ username, activityId })
 		.then(() => res.status(204).send())
-		.catch((err) => res.status(err.status).json(err.message));
+		.catch((err) => aux.onError('Activities register', res, err));
 };
 
 module.exports.list = (req, res) => {
   const username = req.user.username
   return activitiesService.list({ username })
 		.then((activity) => res.status(200).json(activity))
-		.catch((err) => res.status(err.status).json(err.message));
+		.catch((err) => aux.onError('Activities list', res, err));
 };
 
 module.exports.update = (req, res) => {
@@ -59,12 +61,13 @@ module.exports.update = (req, res) => {
     'estimacion',
     'objetivo',
     'tipo',
-    'beneficios'
+    'beneficios',
+    'completada'
   ])
   const id = req.params.activityId;
   return activitiesService.update(id, username, activity)
 		.then((activity) => res.status(204).json(activity))
-		.catch((err) => res.status(err.status).json(err.message));
+		.catch((err) => aux.onError('Activities update', res, err));
 };
 
 module.exports.delete = (req, res) => {
@@ -72,7 +75,7 @@ module.exports.delete = (req, res) => {
   const activityId = req.params.activityId
   return activitiesService.delete({ username, activityId })
 		.then(() => res.status(204).send())
-		.catch((err) => res.status(err.status).json(err.message));
+		.catch((err) => aux.onError('Activities delete', res, err));
 };
 
 module.exports.search = (req, res) => {
@@ -85,5 +88,5 @@ module.exports.search = (req, res) => {
   ])
   return activitiesService.search({ params })
 		.then((activities) => res.status(200).json(activities))
-		.catch((err) => res.status(err.status).json(err.message));
+		.catch((err) => aux.onError('Activities search', res, err));
 };

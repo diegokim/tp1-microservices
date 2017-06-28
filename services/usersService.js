@@ -21,6 +21,7 @@ module.exports.authenticate = ({ username, password }) => Promise.resolve()
 	.then(() 						 => UserRepository.getUserByUsername(username))
   .then((userObtained) => checkPassword(userObtained, password))
   .then(() 		         => getToken(username))
+  .catch(console.log)
 ;
 
 /**

@@ -3,62 +3,27 @@ const assert = require('chai').assert;
 const request = require('superagent');
 const DB = require('../wrappers/database');
 const _ = require('lodash');
+const prefabs = require('./requests/prefabs.requests.js')
+const authReq = require('./requests/auth.requests.js')
+const actReq = require('./requests/activities.requests.js')
+
 
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
-  const name = 'diego';
-  const username = 'diego123';
-  const username2 = 'lucas123';
-  const email = 'diego@gmail.com';
-  const password = 'kim';
-  const password2 = 'ludueno';
-  const nacimiento = '10/10/1990'
-  const user = {
-    username,
-    password
-  };
-  const user2 = {
-    username: username2,
-    password: password2
-  };
-  const newUser = {
-    name,
-    username,
-    email,
-    password,
-    nacimiento
-  };
-  const newUser2 = {
-    name,
-    username: username2,
-    email,
-    password: password2,
-    nacimiento
-  };
-  const activity = {
-    nombre: 'futbol',
-	  descripcion: 'partido de futbol',
-    fechaInicio: '10/7/2017',
-    horaInicio: '12:00',
-    fechaFin: '10/7/2017',
-    horaFin: '13:00',
-    categorias: ['futbol', 'pelota', 'racing'],
-    prioridad: 'alta',
-    participantes: ['diego', 'juanma', 'lautaro', 'hugo'],
-    recordatorio: '9/7/2017',
-    periodicidad: 1,
-    estimacion: 2,
-    foto: 'foto en base 64',
-    tipo: 'act',
-    beneficios: [{
-		  precio: 10,
-		  descuento: 10,
-		  descripcion: ''
-	  }]
-  }
-  const updatedActivity = activity;
-  updatedActivity.descripcion = 'Partidasoo';
+
+  const user = prefabs.user;
+  const username = user.username;
+  const user2 = prefabs.user2;
+  const username2 = user2.username;
+  const newUser = prefabs.newUser;
+  const newUser2 = prefabs.newUser2;
+  const activity = prefabs.activity;
+  const updatedActivity = prefabs.updatedActivity;
+
+  const activityFields = ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
+    'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
+    'estimacion', 'foto', 'tipo', 'beneficios', 'username', 'completada'];
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -69,15 +34,13 @@ describe('Integration tests', () => {
 
   describe('Create and get activities', () => {
     let token;
-    it('Create and then get activities should contain the created activity', () => registerRequest(newUser)
-      .then(() => authenticateRequest(user))
+    it('Create and then get activities should contain the created activity', () => authReq.registerRequest(newUser)
+      .then(() => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(() => createActivity(activity, token))
-      .then(() => getActivities(token))
+      .then(() => actReq.createActivity(activity, token))
+      .then(() => actReq.getActivities(token))
       .then((res) => {
-        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
-          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
+        const createdActivity = _.pick(res.body[0], activityFields);
         assert.deepEqual(createdActivity, Object.assign(activity, { username }))
       })
     );
@@ -86,20 +49,18 @@ describe('Integration tests', () => {
   describe('Update activity', () => {
     let token;
     it('Create and then update activities should contain the updated activity', () => {
-      return registerRequest(newUser)
-      .then(() => authenticateRequest(user))
+      return authReq.registerRequest(newUser)
+      .then(() => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(() => createActivity(activity, token))
-      .then(() => getActivities(token))
+      .then(() => actReq.createActivity(activity, token))
+      .then(() => actReq.getActivities(token))
       .then((res) => {
         const id = res.body[0]._id;
-        updateActivity(id, updatedActivity, token);
+        actReq.updateActivity(id, updatedActivity, token);
       })
-      .then(() => getActivities(token))
+      .then(() => actReq.getActivities(token))
       .then((res) => {
-        const createdActivity = _.pick(res.body[0], ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
-          'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',
-          'estimacion', 'foto', 'tipo', 'beneficios', 'username']);
+        const createdActivity = _.pick(res.body[0], activityFields);
         assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
       })
       }
@@ -111,38 +72,38 @@ describe('Integration tests', () => {
     let token2;
     let activityId;
     it('Create and then delete activity should delete activity', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createActivity(activity, token))
-      .then((res) => deleteActivity(res.body._id, token))
-      .then(()    => getActivities(token))
+      .then(()    => actReq.createActivity(activity, token))
+      .then((res) => actReq.deleteActivity(res.body._id, token))
+      .then(()    => actReq.getActivities(token))
       .then((res) => assert.deepEqual(res.body, []))
     );
 
     it('Create and then delete activity from other user should remove this user from this activity',
             ()    => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => registerRequest(newUser2))
+      .then(()    => authReq.registerRequest(newUser2))
       .then((res) => (token2 = res.body.token))
-      .then(()    => createActivity(activity, token))
+      .then(()    => actReq.createActivity(activity, token))
       .then((res) => {
         activityId = res.body._id;
-        return registerInActivity(activityId, token2)
+        return actReq.registerInActivity(activityId, token2)
       })
-      .then(()    => getActivities(token2))
+      .then(()    => actReq.getActivities(token2))
       .then((res) => {
         const participants = res.body[0].participantes;
         const expectedParticipants = activity.participantes;
         expectedParticipants.push(username2)
         assert.deepEqual(expectedParticipants, participants)
       })
-      .then(()    => deleteActivity(activityId, token2))
-      .then(()    => getActivities(token2))
+      .then(()    => actReq.deleteActivity(activityId, token2))
+      .then(()    => actReq.getActivities(token2))
       .then((res) => assert.deepEqual([], res.body))
-      .then(()    => getActivities(token))
+      .then(()    => actReq.getActivities(token))
       .then((res) => assert.deepEqual(res.body.length, 1))
     );
   });
@@ -151,16 +112,16 @@ describe('Integration tests', () => {
     let token;
     let token2;
     it('Create and then get activity should return the same', () => Promise.resolve()
-      .then(()    => registerRequest(newUser))
+      .then(()    => authReq.registerRequest(newUser))
       .then((res) => (token = res.body.token))
-      .then(()    => registerRequest(newUser2))
+      .then(()    => authReq.registerRequest(newUser2))
       .then((res) => (token2 = res.body.token))
-      .then(()    => createActivity(activity, token))
+      .then(()    => actReq.createActivity(activity, token))
       .then((res) => {
-        return registerInActivity(res.body._id, token)
-        .then(() => registerInActivity(res.body._id, token2))
+        return actReq.registerInActivity(res.body._id, token)
+        .then(() => actReq.registerInActivity(res.body._id, token2))
       })
-      .then(()    => getActivities(token))
+      .then(()    => actReq.getActivities(token))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
         const expectedParticipants = activity.participantes;
@@ -168,7 +129,7 @@ describe('Integration tests', () => {
         expectedParticipants.push(username2)
         assert.deepEqual(expectedParticipants, newParticipants)
       })
-      .then(()    => getActivities(token2))
+      .then(()    => actReq.getActivities(token2))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
         assert.deepEqual( activity.participantes, newParticipants)
@@ -276,25 +237,20 @@ describe('Integration tests', () => {
     })
 
     const searchAndCompareActivities = (searchParams, expectedActivities) => Promise.resolve()
-      .then(()    => registerRequest(newUser))
-      .then(()    => authenticateRequest(user))
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
       .then((res) => (token = res.body.token))
-      .then(()    => createActivity(activityList[0], token))
-      .then(()    => createActivity(activityList[1], token))
-      .then(()    => createActivity(activityList[2], token))
-      .then(()    => createActivity(activityList[3], token))
-      .then(()    => createActivity(activityList[4], token))
-      .then((res) => searchActivities(searchParams, token))
+      .then(()    => actReq.createActivity(activityList[0], token))
+      .then(()    => actReq.createActivity(activityList[1], token))
+      .then(()    => actReq.createActivity(activityList[2], token))
+      .then(()    => actReq.createActivity(activityList[3], token))
+      .then(()    => actReq.createActivity(activityList[4], token))
+      .then((res) => actReq.searchActivities(searchParams, token))
       .then((res) => compareActivities(res.body, expectedActivities))
   });
 });
 
-//  AUXILIAR FUNCTIONS
-const registerRequest = (regUser) => Promise.resolve(
-  request.post(baseUrl + '/users/register')
-    .set({'content-type': 'application/json'})
-    .send(regUser)
-);
+
 
 const compareActivities = (givenAct, expectedAct) => {
   for (const activ of givenAct) {
@@ -305,50 +261,3 @@ const compareActivities = (givenAct, expectedAct) => {
 
   assert.deepEqual(givenAct, expectedAct);
 }
-
-const authenticateRequest = (authUser) => Promise.resolve(
-  request.post(baseUrl + '/users/authenticate')
-    .set({'content-type': 'application/json'})
-    .send(authUser)
-);
-
-const createActivity = (activity, token) => Promise.resolve(
-  request.post(baseUrl + '/activities')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send(activity)
-);
-
-const getActivities = (token) => Promise.resolve(
-  request.get(baseUrl + '/activities')
-    .set({'Authorization': token})
-    .send()
-);
-
-const updateActivity = (id, activity, token) => Promise.resolve(
-  request.put(baseUrl + '/activities/' + id)
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send(activity)
-);
-
-const searchActivities = (searchParams, token) => Promise.resolve(
-  request.post(baseUrl + '/activities/search')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send(searchParams)
-);
-
-const registerInActivity = (id, token) => Promise.resolve(
-  request.put(baseUrl + '/activities/' + id + '/register')
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send()
-);
-
-const deleteActivity = (id, token) => Promise.resolve(
-  request.delete(baseUrl + '/activities/' + id)
-    .set({'content-type': 'application/json'})
-    .set({'Authorization': token})
-    .send()
-);

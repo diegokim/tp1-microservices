@@ -1,4 +1,4 @@
-GET /objetivos
+GET /objetives
 
 HEADER: AUTHORIZATION, Bearer + token
 
@@ -14,7 +14,7 @@ respuesta --> 200 // + LISTA DE OBJETIVOS
 
 ——————————————————————
  
-POST /objetivos
+POST /objectives
 
 HEADER: AUTHORIZATION, Bearer + token
 
@@ -38,7 +38,7 @@ body: {
 
 ——————————————————
 
-PUT /objetivos/{id} //UPDATE DEL OBJETIVO
+PUT /objectives/{id} //UPDATE DEL OBJETIVO
 
 HEADER: AUTHORIZATION, Bearer + token
 

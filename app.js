@@ -6,6 +6,7 @@ const passport = require('passport');
 const statusRoutes = require('./routes/statusRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const activitiesRoutes = require('./routes/activitiesRoutes');
+const objectivesRoutes = require('./routes/objectivesRoutes')
 const database = require('./wrappers/database');
 
 // eslint-disable-next-line
@@ -37,6 +38,9 @@ app.use(statusRoutes);
 
 // Activities routes
 app.use(activitiesRoutes);
+
+//  Objectives routes
+app.use(objectivesRoutes);
 
 //  Setting the invalid enpoint message for any other route
 app.get('*', (req, res) => {
