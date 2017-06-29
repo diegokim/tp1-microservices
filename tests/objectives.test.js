@@ -110,7 +110,7 @@ describe('Objective Tests', () => {
     );
   });
 
-  describe.only('Remove activity should remove it from objetive', () => {
+  describe('Remove activity should remove it from objetive', () => {
     let token;
     let objId;
     let activityId;

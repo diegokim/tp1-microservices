@@ -37,10 +37,17 @@ const getToken = (username) => {
  *
  */
 const checkPassword = (user, password) => {
-  if (!user) {
+  if (user) { // refactorizar
+    UserRepository.comparePassword(password, user.password)
+    .then((isEqual) => {
+      if (isEqual) {
+        return Promise.resolve();
+      }
+      console.log('ERROR')
+      return Promise.reject({ status: 401, message: 'Authenticate error: invalid password' });
+    })
+    .catch(() => Promise.reject({ status: 401, message: 'Authenticate error: invalid password' }))
+  } else {
     return Promise.reject({ status: 404, message: 'User not found' });
-  } else if (!UserRepository.comparePassword(password, user.password)) {
-    return Promise.reject({ status: 401, message: 'Authenticate error: invalid password' });
   }
-  return Promise.resolve();
 };

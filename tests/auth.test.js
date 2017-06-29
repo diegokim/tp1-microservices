@@ -9,6 +9,10 @@ const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEV
 describe('Integration tests', () => {
   const user = prefabs.user;
   const newUser = prefabs.newUser;
+  const wrongUser = {
+    username: 'diego',
+    password: 'wrooooooongpasssssswoooord'
+  };
 
 	// Leave the database in a valid state
   beforeEach((done) => {
@@ -27,6 +31,22 @@ describe('Integration tests', () => {
 
   describe('Authenticate', () => {
     it('Wrong username should return not found', () => authReq.authenticateRequest(user)
+      .then((res) => {
+        assert.equal(res.status, 404);
+        assert.equal(res.message, 'Not Found');
+      })
+      .catch((res) => {
+        assert.equal(res.status, 404);
+        assert.equal(res.message, 'Not Found');
+      }));
+
+
+    it('Wrong password should return not found', () => authReq.registerRequest(newUser)
+      .then(() => authReq.authenticateRequest(wrongUser))
+      .then((res) => {
+        assert.equal(res.status, 404);
+        assert.equal(res.message, 'Not Found');
+      })
       .catch((res) => {
         assert.equal(res.status, 404);
         assert.equal(res.message, 'Not Found');

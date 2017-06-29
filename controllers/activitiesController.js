@@ -38,7 +38,7 @@ module.exports.register = (req, res) => {
 };
 
 module.exports.list = (req, res) => {
-  const username = req.user.username
+  const username = req.user.username;
   return activitiesService.list({ username })
 		.then((activity) => res.status(200).json(activity))
 		.catch((err) => aux.onError('Activities list', res, err));
