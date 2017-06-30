@@ -237,3 +237,119 @@ Respuesta:
 		foto: ""
 	}]
 
+
+
+# API OBJETIVOS
+
+## Obtener objetivos
+
+Tipo y URI:
+
+	GET /objetives
+	
+Headers
+
+	HEADER: AUTHORIZATION, Bearer + token
+
+Respuesta:
+
+	respuesta --> 200 // + LISTA DE OBJETIVOS
+		body: [{
+			_id: "",
+			username:””
+			nombre: "",
+			descripcion: "",
+			categorias: ["categoria", "categoria"],
+			actividades: [“_id_actividad1”,”_id_actividad2”]
+		}]
+
+
+## Crear un objetivo 
+
+Tipo y URI:
+
+	POST /objectives
+	
+Headers
+
+	HEADER: AUTHORIZATION, Bearer + token
+
+Mensaje:
+
+
+	body: {
+		“nombre”:”Dejar de fumar”,
+		“descripcion”:”El pucho me esta haciendo mal”,
+		“categorias”: [“Salud”]
+	}
+
+Respuesta:
+
+	respuesta --> 201
+
+	body: {
+		_id: “as123j5kl435j4kc”,
+		username:”diego”
+		nombre:”Dejar de fumar”,
+		descripcion:”El pucho me esta haciendo mal”,
+		categorias: [“Salud”]
+	}
+
+
+## Agregar una actividad a un objetivo
+Tipo y URI:
+
+	PUT /objectives/{id} //Add activity to objective
+
+Headers:
+
+	HEADER: AUTHORIZATION, Bearer + token
+
+Mensaje:
+
+	body: {
+		“activityId”: <id>
+	}
+	
+Respuesta:
+
+	respuesta --> 201
+
+	body: {
+		_id: “as123j5kl435j4kc”,
+		username:”diego”
+		nombre:”Dejar de fumar”,
+		descripcion:”El pucho me esta haciendo mal”,
+		categorias: [“Salud”],
+		actividades: [<id> ]
+	}
+
+
+
+## Lliminar un objetivo
+
+Tipo y URI:
+
+	DELETE /objectives/{id}
+
+Headers:
+
+	HEADER: AUTHORIZATION, Bearer + token
+
+Respuesta:
+
+	respuesta --> 200
+
+
+## Remover una actividad de un objetivo
+
+Tipo y URI:
+
+	DELETE /objectives/{objectiveId}/{activityId}
+
+Headers:
+
+	HEADER: AUTHORIZATION, Bearer + token
+Respuesta:
+
+	respuesta --> 200
