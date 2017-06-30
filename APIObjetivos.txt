@@ -1,3 +1,5 @@
+#Obtener objetivos
+
 GET /objetives
 
 HEADER: AUTHORIZATION, Bearer + token
@@ -13,16 +15,16 @@ respuesta --> 200 // + LISTA DE OBJETIVOS
 	}]
 
 ——————————————————————
- 
+#Crear un objetivo 
+
 POST /objectives
 
 HEADER: AUTHORIZATION, Bearer + token
 
 body: {
-	nombre:”Dejar de fumar”,
-	descripcion:”El pucho me esta haciendo mal”,
-	categorias: [“Salud”],
-	actividades: [] //Puede estar vacia
+	“nombre”:”Dejar de fumar”,
+	“descripcion”:”El pucho me esta haciendo mal”,
+	“categorias”: [“Salud”]
 }
 
 respuesta --> 201
@@ -32,21 +34,18 @@ body: {
 	username:”diego”
 	nombre:”Dejar de fumar”,
 	descripcion:”El pucho me esta haciendo mal”,
-	categorias: [“Salud”],
-	actividades: []
+	categorias: [“Salud”]
 }
 
 ——————————————————
+#Agregar una actividad a un objetivo
 
-PUT /objectives/{id} //UPDATE DEL OBJETIVO
+PUT /objectives/{id} //Add activity to objective
 
 HEADER: AUTHORIZATION, Bearer + token
 
 body: {
-	nombre:”Dejar de fumar”,
-	descripcion:”El pucho me esta haciendo mal”,
-	categorias: [“Salud”],
-	actividades: [“xcmvn123cn12mn”] //id de una actividad
+	“activityId”: <id>
 }
 
 respuesta --> 201
@@ -57,5 +56,25 @@ body: {
 	nombre:”Dejar de fumar”,
 	descripcion:”El pucho me esta haciendo mal”,
 	categorias: [“Salud”],
-	actividades: [“xcmvn123cn12mn”]
+	actividades: [<id> ]
 }
+
+
+———————————————
+#eliminar un objetivo
+
+DELETE /objectives/{id}
+
+HEADER: AUTHORIZATION, Bearer + token
+
+respuesta --> 200
+
+————————
+
+#remover una actividad de un objetivo
+
+DELETE /objectives/{objectiveId}/{activityId}
+
+HEADER: AUTHORIZATION, Bearer + token
+
+respuesta --> 200
