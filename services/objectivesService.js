@@ -7,7 +7,7 @@ module.exports.create = ({ objective, username, actividades }) => {
   return ObjectiveRepository.create(newObjective)
     .catch((err) => {
       console.log(err)
-      Promise.reject({ status: 409, message: err })
+      return Promise.reject({ status: 409, message: err })
     });
 };
 
@@ -15,12 +15,12 @@ module.exports.list = ({ username }) => Promise.resolve()
 	.then(() => ObjectiveRepository.getObjectivesByUsername(username))
 ;
 
-module.exports.addActivityToObjective = ({username, objectiveId}, activityId) => Promise.resolve()
+module.exports.addActivityToObjective = ({username, objectiveId, activityId}) => Promise.resolve()
   .then(() => ActivityService.activityExists(activityId)) //Es necesario que la actividad sea del user con username??
-  .then(() => ObjectiveRepository.addActivityToObjective({username, objectiveId}, activityId))
+  .then(() => ObjectiveRepository.addActivityToObjective({username, objectiveId, activityId}))
   .catch((err) => {
     console.log(err)
-    Promise.reject({ status: 409, message: err })
+    return Promise.reject({ status: 409, message: err })
   });
 
 module.exports.delete = (objectiveId, username) => Promise.resolve()

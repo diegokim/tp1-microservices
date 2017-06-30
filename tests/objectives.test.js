@@ -54,9 +54,9 @@ describe('Objective Tests', () => {
       .then((res) => token = res.body.token)
       .then(() => token ? Promise.resolve() : Promise.reject())
       .then(()    => objReq.createObjective(objective, token))
-      .then((res) => (objId = res.body._id) )
+      .then((res) => (objId = res.body._id) ).then(() => objId ? Promise.resolve() : Promise.reject())
       .then(() => actReq.createActivity(activity,token))
-      .then((res) => (activityId = res.body._id) )
+      .then((res) => (activityId = res.body._id) ).then(() => activityId ? Promise.resolve() : Promise.reject())
       .then(() => objReq.addActivityToObjective(objId, activityId, token) )
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
@@ -101,7 +101,7 @@ describe('Objective Tests', () => {
       .then(() => actReq.createActivity(activity,token))
       .then((res) => (activityId = res.body._id) )
       .then(() => objReq.addActivityToObjective(objId, activityId, token) )
-      .then(() => objReq.removeActivityFromObjective(objId, activityId, token))
+      .then((variable) => objReq.removeActivityFromObjective(objId, activityId, token))
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
         const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
@@ -117,13 +117,12 @@ describe('Objective Tests', () => {
     it('should be updated at the next getObjectives', () => Promise.resolve()
       .then(()    => authReq.registerRequest(newUser))
       .then(()    => authReq.authenticateRequest(user))
-      .then((res) => token = res.body.token)
-      .then(()    => token ? Promise.resolve() : Promise.reject())
+      .then((res) => token = res.body.token).then(()    => token ? Promise.resolve() : Promise.reject('NO TOKEN'))
       .then(()    => objReq.createObjective(objective, token))
-      .then((res) => (objId = res.body._id) )
-      .then(()    => objId ? Promise.resolve() : Promise.reject())
+      .then((res) => (objId = res.body._id) ).then(()    => objId ? Promise.resolve() : Promise.reject('NO OBJID'))
       .then(()    => actReq.createActivity(activity,token))
-      .then((res) => (activityId = res.body._id))
+      .then((res) => (activityId = res.body._id)).then(()    => activityId ? Promise.resolve() : Promise.reject('NO ACTID'))
+      .then(()    => objReq.addActivityToObjective(objId, activityId, token) )
       .then(()    => actReq.deleteActivity(activityId, token))
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
@@ -137,6 +136,46 @@ describe('Objective Tests', () => {
       })
     );
   });
+
+  describe('When create an activity it should be assigned to the objetive', () => {
+    let token;
+    let objId;
+    let activityId;
+    it('should be updated at the next getObjectives', () => Promise.resolve()
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
+      .then((res) => token = res.body.token).then(()    => token ? Promise.resolve() : Promise.reject())
+      .then(()    => objReq.createObjective(objective, token))
+      .then((res) => (objId = res.body._id) ).then(()    => objId ? Promise.resolve() : Promise.reject())
+      .then(()    => actReq.createActivity(Object.assign(activity, { objetivo: Object.assign(objective, {_id: objId }) }), token))
+      .then((res) => (activityId = res.body._id))
+      .then(()    => objReq.getObjectives(token))
+      .then((res) => {
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
+        assert.deepEqual(Object.assign(createdObjective, {_id: objId }), Object.assign(objective, { username }, {actividades: [activityId]}));
+      })
+    );
+  });
+
+
+  describe('When create an activity it should be assigned to the objetive and create it if it doesnt exists', () => {
+    let token;
+    let objId;
+    let activityId;
+    it('should be updated at the next getObjectives', () => Promise.resolve()
+      .then(()    => authReq.registerRequest(newUser))
+      .then(()    => authReq.authenticateRequest(user))
+      .then((res) => token = res.body.token).then(()    => token ? Promise.resolve() : Promise.reject())
+      .then(()    => actReq.createActivity(Object.assign(activity, { objetivo: objective }), token))
+      .then((res) => (activityId = res.body._id))
+      .then(()    => objReq.getObjectives(token))
+      .then((res) => {
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
+        assert.deepEqual(Object.assign(createdObjective, {_id: objective._id }), Object.assign(objective, { username }, {actividades: [activityId]}));
+      })
+    );
+  });
+
 
 //  End of Test case
 });

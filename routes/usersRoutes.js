@@ -18,7 +18,7 @@ router.post('/users/authenticate', (req, res) => {
   if (userValidator.isValidUser(req.body)) {
     return userController.authenticate(req, res);
   }
-  aux.onError('User register', res, {status: 400, message: 'Missing params'})
+  aux.onError('User Auth', res, {status: 400, message: 'Missing params'})
 });
 
 //  Profile

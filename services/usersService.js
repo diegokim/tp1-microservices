@@ -38,12 +38,11 @@ const getToken = (username) => {
  */
 const checkPassword = (user, password) => {
   if (user) { // refactorizar
-    UserRepository.comparePassword(password, user.password)
+    return UserRepository.comparePassword(password, user.password)
     .then((isEqual) => {
       if (isEqual) {
         return Promise.resolve();
       }
-      console.log('ERROR')
       return Promise.reject({ status: 401, message: 'Authenticate error: invalid password' });
     })
     .catch(() => Promise.reject({ status: 401, message: 'Authenticate error: invalid password' }))

@@ -13,7 +13,7 @@ router.post('/objectives', passport.authenticate('jwt', {'session': false}), (re
 });
 
 //  Put an activity into an objective
-router.put('/objectives/:objetiveId', passport.authenticate('jwt', {'session': false}), (req, res) => {
+router.put('/objectives/:objectiveId', passport.authenticate('jwt', {'session': false}), (req, res) => {
   objectivesController.addActivityToObjective(req, res)
   .catch(() => res.status(400).json({ message: 'Invalid activity' }))
 });

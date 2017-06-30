@@ -7,11 +7,9 @@ const prefabs = require('./requests/prefabs.requests.js')
 const authReq = require('./requests/auth.requests.js')
 const actReq = require('./requests/activities.requests.js')
 
-
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
 describe('Integration tests', () => {
-
   const user = prefabs.user;
   const username = user.username;
   const user2 = prefabs.user2;
@@ -20,6 +18,7 @@ describe('Integration tests', () => {
   const newUser2 = prefabs.newUser2;
   const activity = prefabs.activity;
   const updatedActivity = prefabs.updatedActivity;
+  delete activity.objetivo;
 
   const activityFields = ['nombre', 'descripcion', 'fechaInicio', 'horaInicio',
     'fechaFin', 'horaFin', 'categorias', 'prioridad', 'participantes', 'recordatorio', 'periodicidad',

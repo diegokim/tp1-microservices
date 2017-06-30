@@ -21,10 +21,10 @@ module.exports.create = (req, res) => {
     'beneficios',
     'completada'
   ])
+  const objective = req.body.objetivo;
+  const username = req.user.username;
 
-  const username = req.user.username
-
-  return activitiesService.create({ activity, username })
+  return activitiesService.create({ activity, username, objective })
 	  .then((createdActivity) => res.status(201).json(createdActivity))
   	.catch((err) => aux.onError('Activities create', res, err));
 };

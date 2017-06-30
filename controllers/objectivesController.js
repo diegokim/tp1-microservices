@@ -20,8 +20,7 @@ module.exports.addActivityToObjective = (req, res) => {
   const username = req.user.username
   const objectiveId = req.params.objectiveId
   const activityId = req.body.activityId;
-
-  return objectivesService.addActivityToObjective({ username, objectiveId }, activityId)
+  return objectivesService.addActivityToObjective({ username, objectiveId, activityId})
 		.then(() => res.status(204).send())
 		.catch((err) => aux.onError('Objectives add activity to objective', res, err));
 };

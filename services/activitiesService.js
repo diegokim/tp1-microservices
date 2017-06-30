@@ -1,11 +1,29 @@
 const ActivityRepository = require('../repositories/activitiesRepository');
-const ObjetiveRepository = require('../repositories/objectivesRepository');
+const ObjectiveRepository = require('../repositories/objectivesRepository');
+const ObjectiveService = require('./objectivesService')
 
-module.exports.create = ({ activity, username }) => {
+module.exports.create = ({ activity, username, objective }) => {
+
   const newActivity = new ActivityRepository(Object.assign({}, activity, { username }));
 
   return ActivityRepository.create(newActivity)
-  	.catch((err) => Promise.reject({ status: 409, message: err }));
+  .then((act) => {
+    if (objective) {
+      const objectiveId = objective._id;
+      return ObjectiveRepository.getObjectiveById(objectiveId)
+        .then((obj) => {
+          if (obj) {
+            return ObjectiveRepository.addActivityToObjective({ username, objectiveId: objectiveId, activityId: act._id })
+          }
+          return ObjectiveService.create({objective, username, actividades: []})
+          .then((newObjective) => ObjectiveRepository.addActivityToObjective({ username, objectiveId: newObjective._id, activityId: act._id }))
+        })
+        .then(() => act)
+    } else {
+      return act;
+    }
+  })
+  .catch((err) => Promise.reject({ status: 409, message: err }));
 };
 
 module.exports.register = ({ activityId, username }) => Promise.resolve()
@@ -39,7 +57,7 @@ module.exports.delete = ({ activityId, username }) => Promise.resolve()
     }
     return Promise.reject({ status: 403, message: 'Unauthorize' });
   })
-  .then(() => ObjetiveRepository.deleteActivityFromAll(activityId))
+  .then(() => ObjectiveRepository.deleteActivityFromAll(activityId))
 ;
 
 module.exports.search = ({ params }) => Promise.resolve()

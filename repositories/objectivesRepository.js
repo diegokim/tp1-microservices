@@ -27,7 +27,7 @@ module.exports.getObjectiveById = function (id) {
 }
 
 module.exports.getObjectiveBy = function (query) {
-  return Objective.find(query);
+  return Objective.findOne(query);
 }
 
 module.exports.getObjectivesByUsername = function (username) {
@@ -39,13 +39,13 @@ module.exports.create = function (objective) {
   return objective.save();
 }
 
-module.exports.addActivityToObjective = function ({username, objectiveId}, activityId) {
-  return this.getObjectiveBy({username, objectiveId})
+module.exports.addActivityToObjective = function ({username, objectiveId, activityId}) {
+  return this.getObjectiveBy({username, _id: objectiveId})
   .then((objective) => {
     if (objective) {
-      const newActividades = objective[0].actividades;
+      const newActividades = objective.actividades;
       newActividades.push(activityId);
-      return objective[0].update({actividades: newActividades})
+      return objective.update({actividades: newActividades})
     } else {
       return Promise.reject('Objective not found in addActivityToObjective'); //Esta bien devolver esto aca?
     }
@@ -81,8 +81,8 @@ module.exports.deleteActivityFromAll = function (activityId) {
   return Objective.find(query)
     .then((objetives) => {
       const promises = [];
-      objetives.forEach((objetive) => {
-        const activities = objetive.actividades;
+      objetives.forEach((objective) => {
+        const activities = objective.actividades;
         const activityIndex = activities.indexOf(activityId);
         if (activityIndex > -1) {
           activities.splice(activityIndex, 1);
