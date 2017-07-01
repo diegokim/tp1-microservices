@@ -170,8 +170,8 @@ describe('Objective Tests', () => {
       .then((res) => (activityId = res.body._id))
       .then(()    => objReq.getObjectives(token))
       .then((res) => {
-        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username']);
-        assert.deepEqual(Object.assign(createdObjective, {_id: objective._id }), Object.assign(objective, { username }, {actividades: [activityId]}));
+        const createdObjective = _.pick(res.body[0], ['nombre', 'descripcion', 'categorias', 'actividades', 'username', '_id']);
+        assert.deepEqual(createdObjective, Object.assign(objective, { username }, {actividades: [activityId], _id: res.body[0]._id }));
       })
     );
   });

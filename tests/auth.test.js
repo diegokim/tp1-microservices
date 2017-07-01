@@ -8,7 +8,13 @@ const server = require('../app.js');    // TENEMOS QUE BUSCAR LA FORMA DE NO LEV
 
 describe('Integration tests', () => {
   const user = prefabs.user;
+  const username2 = 'username2';
+  const username3 = 'username3';
+  const username4 = 'username4';
   const newUser = prefabs.newUser;
+  const newUser2 = Object.assign({}, newUser, { username: username2 });
+  const newUser3 = Object.assign({}, newUser, { username: username3 });
+  const newUser4 = Object.assign({}, newUser, { username: username4 });
   const wrongUser = {
     username: 'diego',
     password: 'wrooooooongpasssssswoooord'
@@ -76,6 +82,21 @@ describe('Integration tests', () => {
       .then((res) => {
         assert.equal(res.status, 200);
         assert.equal(res.body.success, true);
+      }));
+  });
+
+  describe('Get users', () => {
+    let token;
+    it('Get users should return all the users in the DB as string array', () => Promise.resolve()
+      .then(() => authReq.registerRequest(newUser))
+      .then((res) => (token = res.body.token))
+      .then(() => authReq.registerRequest(newUser2))
+      .then(() => authReq.registerRequest(newUser3))
+      .then(() => authReq.registerRequest(newUser4))
+      .then(() => authReq.getAllUsers(token))
+      .then((res) => {
+        const users = res.body;
+        assert.deepEqual(users, [newUser.username, username2, username3, username4])
       }));
   });
 });

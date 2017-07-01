@@ -50,6 +50,10 @@ module.exports.getUserByUsername = function (username) {
   return User.findOne(query)
 }
 
+module.exports.getAll = function () {
+  return User.find();
+}
+
 module.exports.addUser = function (newUser) {
   return bcrypt.genSalt(10)
     .then((salt) => bcrypt.hash(newUser.password, salt))
