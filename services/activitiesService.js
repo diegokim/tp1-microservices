@@ -11,13 +11,9 @@ module.exports.create = ({ activity, username, objective }) => {
     if (objective) {
       const objectiveId = objective._id;
       return ObjectiveRepository.getObjectiveById(objectiveId)
-        .then((obj) => {
-          if (obj) {
-            return ObjectiveRepository.addActivityToObjective({ username, objectiveId: objectiveId, activityId: act._id })
-          }
-          return ObjectiveService.create({objective, username, actividades: []})
-          .then((newObjective) => ObjectiveRepository.addActivityToObjective({ username, objectiveId: newObjective._id, activityId: act._id }))
-        })
+        .then((obj) => obj ?
+            ObjectiveRepository.addActivityToObjective({ username, objectiveId: objectiveId, activityId: act._id }) :
+            ObjectiveService.create({objective, username, actividades: [act._id.toString()]}))
         .then(() => act)
     } else {
       return act;

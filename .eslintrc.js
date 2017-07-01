@@ -113,7 +113,7 @@ module.exports = {
         "max-statements": "off",
         "max-statements-per-line": "error",
         "multiline-ternary": [
-            "error",
+            "off",
             "never"
         ],
         "new-parens": "error",
@@ -127,7 +127,7 @@ module.exports = {
         "no-caller": "error",
         "no-catch-shadow": "error",
         "no-compare-neg-zero": "error",
-        "no-confusing-arrow": "error",
+        "no-confusing-arrow": "off",
         "no-continue": "error",
         "no-console": "off",
         "no-div-regex": "error",
@@ -232,7 +232,7 @@ module.exports = {
         "one-var": "off",
         "one-var-declaration-per-line": "error",
         "operator-assignment": "error",
-        "operator-linebreak": "error",
+        "operator-linebreak": "off",
         "padded-blocks": "off",
         "prefer-arrow-callback": "error",
         "prefer-const": "error",

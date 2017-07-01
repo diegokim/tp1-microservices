@@ -50,3 +50,8 @@ const checkPassword = (user, password) => {
     return Promise.reject({ status: 404, message: 'User not found' });
   }
 };
+
+module.exports.getAll = () => Promise.resolve()
+	.then(() => UserRepository.getAll())
+  .then((users) => users.map((user) => user.username))
+;

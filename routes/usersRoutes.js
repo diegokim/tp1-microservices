@@ -26,4 +26,7 @@ router.get('/users/profile', passport.authenticate('jwt', {'session': false}), (
   res.status(200).json({'success': true});
 });
 
+//  Users
+router.get('/users', passport.authenticate('jwt', {'session': false}), (req, res) => userController.getAll(req, res));
+
 module.exports = router;

@@ -17,3 +17,8 @@ module.exports.authenticate = (req, res) => {
 		.then((token) => res.status(200).json(token))
 		.catch((err) => aux.onError('Auth authenticate', res, err));
 };
+
+module.exports.getAll = (req, res) => Promise.resolve()
+  .then(() => userService.getAll())
+  .then((users) => res.status(200).json(users))
+  .catch((err) => aux.onError('Get all users', res, err));

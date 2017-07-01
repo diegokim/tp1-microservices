@@ -19,3 +19,10 @@ module.exports.getProfileRequest = (jwt) => Promise.resolve(
     .set({'Authorization': jwt})
     .send()
 );
+
+module.exports.getAllUsers = (jwt) => Promise.resolve(
+  request.get(baseUrl + '/users')
+    .set({'content-type': 'application/json'})
+    .set({'Authorization': jwt})
+    .send()
+);
