@@ -4,7 +4,7 @@ const ObjectiveService = require('./objectivesService')
 
 module.exports.create = ({ activity, username, objective }) => {
 
-  const newActivity = new ActivityRepository(Object.assign({}, activity, { username }));
+  const newActivity = new ActivityRepository(Object.assign({}, activity, {aceptados: []}, { username }));
 
   return ActivityRepository.create(newActivity)
   .then((act) => {
