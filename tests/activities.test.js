@@ -55,7 +55,7 @@ describe('Integration tests', () => {
       .then(() => actReq.getActivities(token))
       .then((res) => {
         const id = res.body[0]._id;
-        actReq.updateActivity(id, updatedActivity, token);
+        return actReq.updateActivity(id, updatedActivity, token);
       })
       .then(() => actReq.getActivities(token))
       .then((res) => {

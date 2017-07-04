@@ -90,7 +90,8 @@ module.exports.delete = function (id) {
 }
 
 module.exports.getActivitiesByUsername = function (username) {
-  const query = { $or: [{ username }, { participantes: { $regex: username } }] }
+  const regex = new RegExp('.*' + username + '.*');
+  const query = { $or: [{ username }, { participantes: { $regex: regex } }] }
   return Activity.find(query);
 }
 

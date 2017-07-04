@@ -43,7 +43,7 @@ const activity = {
   periodicidad: 1,
   estimacion: 2,
   foto: 'foto en base 64',
-  tipo: 'act',
+  tipo: 'publica',
   beneficios: [{
     precio: 10,
     descuento: 10,
