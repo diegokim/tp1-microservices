@@ -52,4 +52,4 @@ app.listen(port, () => {
   console.log('Server started at port ' + port);
 });
 
-// mockData.startMocking(database);
+mockData.startMocking(database);

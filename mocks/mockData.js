@@ -44,7 +44,8 @@ const createActivity = (activity, token) => Promise.resolve(
     .send(activity)
 );
 
-const activities = [ // ACTIVIDADES FUTBOL
+const activities = [
+  // ACTIVIDADES FUTBOL
   {
     nombre: 'Partido de Futbol',
 	  descripcion: 'partido de futbol con amigos',
@@ -65,7 +66,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 10,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Translado a Racing vs Barcelona',
@@ -87,7 +89,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 500,
 		  descuento: 20,
 		  descripcion: 'descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Entradas Racing vs Godoy Cruz',
@@ -109,7 +112,31 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 300,
 		  descuento: 20,
 		  descripcion: 'descuento'
-	  }]
+	  }],
+    completada: false
+  },
+  {
+    nombre: 'Clases de futbol 11',
+	  descripcion: 'Clases para divertirse con amigos',
+    fechaInicio: '14/8/2017',
+    horaInicio: '10:00',
+    fechaFin: '20/12/2017',
+    horaFin: '12:00',
+    categorias: ['futbol', 'clases', 'partido', 'gol'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 1,
+    estimacion: 3,
+    lugar: 'Quilmes',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [{
+		  precio: 600,
+		  descuento: 10,
+		  descripcion: 'descuento'
+	  }],
+    completada: false
   },
 
   // ACTIVIDADES TRABAJO
@@ -133,7 +160,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 100,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Oferta trabajo: Ingeniero en sistema',
@@ -155,7 +183,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 100,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Oferta Trabajo: cuidar a mis hijos',
@@ -177,7 +206,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 100,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
 
   // ACTIVIDADES FIESTA
@@ -201,7 +231,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 100,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Fiesta para adolescentes',
@@ -223,7 +254,8 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 200,
 		  descuento: 10,
 		  descripcion: 'hiper descuento'
-	  }]
+	  }],
+    completada: false
   },
   {
     nombre: 'Fiestas infantiles',
@@ -245,6 +277,101 @@ const activities = [ // ACTIVIDADES FUTBOL
 		  precio: 1000,
 		  descuento: 5,
 		  descripcion: 'descuento apreciado'
-	  }]
+	  }],
+    completada: false
+  },
+  {
+    nombre: 'Google Event',
+	  descripcion: 'Evento de google en puerto madero',
+    fechaInicio: '20/8/2017',
+    horaInicio: '10:00',
+    fechaFin: '20/8/2017',
+    horaFin: '16:00',
+    categorias: ['evento', 'google', 'pmadero'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 1,
+    estimacion: 3,
+    lugar: 'Juana manso 332',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [{
+		  precio: 1000,
+		  descuento: 20,
+		  descripcion: 'descuento apreciado'
+	  }],
+    completada: false
+  },
+
+    // ACTIVIDADES COMPRA
+  {
+    nombre: 'Zapatillas Nike',
+	  descripcion: 'Venta de zapatillas en caballito',
+    fechaInicio: '12/10/2017',
+    horaInicio: '10:00',
+    fechaFin: '12/12/2017',
+    horaFin: '20:00',
+    categorias: ['venta', 'zapatillas'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 1,
+    estimacion: 3,
+    lugar: 'Caballito. AV la Plata 940',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [{
+		  precio: 400,
+		  descuento: 5,
+		  descripcion: 'hiper descuento'
+	  }],
+    completada: false
+  },
+  {
+    nombre: 'Venta Perfumes',
+	  descripcion: 'Perfumes importados',
+    fechaInicio: '05/7/2017',
+    horaInicio: '04:00',
+    fechaFin: '16/7/2017',
+    horaFin: '17:00',
+    categorias: ['perfumes', 'compra', 'venta'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 1,
+    estimacion: 3,
+    lugar: 'Conurbano',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [{
+		  precio: 200,
+		  descuento: 10,
+		  descripcion: 'hiper descuento'
+	  }],
+    completada: false
+  },
+  {
+    nombre: 'Compra de indumentaria',
+	  descripcion: 'Compra de indumentario ML',
+    fechaInicio: '14/7/2017',
+    horaInicio: '10:00',
+    fechaFin: '30/9/2017',
+    horaFin: '20:00',
+    categorias: ['ml', 'mercado libre', 'indumentaria'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 1,
+    estimacion: 3,
+    lugar: 'Palermo. Cabildo 220',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [{
+		  precio: 350,
+		  descuento: 10,
+		  descripcion: 'descuento'
+	  }],
+    completada: false
   }
 ]
