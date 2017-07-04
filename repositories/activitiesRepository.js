@@ -52,6 +52,9 @@ const ActivitySchema = mongoose.Schema({
   },
   completada: {
     type: Boolean
+  },
+  aceptados: {
+    type: Array
   }
 })
 
@@ -91,13 +94,22 @@ module.exports.getActivitiesByUsername = function (username) {
   return Activity.find(query);
 }
 
+const addIfNotPresent = ({lista, elemento}) => {
+  const elemIndex = lista.indexOf(elemento);
+  if (elemIndex === -1) {
+    lista.push(elemento);
+  }
+}
+
 module.exports.addUser = function (activityId, username) {
   const query = { _id: activityId }
   return Activity.findById(query)
     .then((activity) => {
       const newParticipants = activity.participantes;
-      newParticipants.push(username);
-      return activity.update({ participantes: newParticipants });
+      addIfNotPresent({lista: newParticipants, elemento: username});
+      const newAccepted = activity.aceptados;
+      addIfNotPresent({lista: newAccepted, elemento: username});
+      return activity.update({ participantes: newParticipants, aceptados: newAccepted });
     })
 }
 
