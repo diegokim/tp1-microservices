@@ -40,7 +40,7 @@ describe('Integration tests', () => {
       .then(() => actReq.getActivities(token))
       .then((res) => {
         const createdActivity = _.pick(res.body[0], activityFields);
-        assert.deepEqual(createdActivity, Object.assign(activity, { username }))
+        assert.deepEqual(createdActivity, Object.assign({}, activity, { username }))
       })
     );
   });
@@ -60,7 +60,7 @@ describe('Integration tests', () => {
       .then(() => actReq.getActivities(token))
       .then((res) => {
         const createdActivity = _.pick(res.body[0], activityFields);
-        assert.deepEqual(createdActivity, Object.assign(updatedActivity, { username }))
+        assert.deepEqual(createdActivity, Object.assign({}, updatedActivity, { username }))
       })
       }
     );
@@ -95,7 +95,8 @@ describe('Integration tests', () => {
       .then(()    => actReq.getActivities(token2))
       .then((res) => {
         const participants = res.body[0].participantes;
-        const expectedParticipants = activity.participantes;
+
+        const expectedParticipants = _.cloneDeep(activity.participantes);
         expectedParticipants.push(username2)
         assert.deepEqual(expectedParticipants, participants)
       })
@@ -123,7 +124,7 @@ describe('Integration tests', () => {
       .then(()    => actReq.getActivities(token))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
-        const expectedParticipants = activity.participantes;
+        const expectedParticipants = _.cloneDeep(activity.participantes);
         expectedParticipants.push(username)
         expectedParticipants.push(username2)
         assert.deepEqual(expectedParticipants, newParticipants)
@@ -131,7 +132,11 @@ describe('Integration tests', () => {
       .then(()    => actReq.getActivities(token2))
       .then((res) => {
         const newParticipants = res.body[0].participantes;
-        assert.deepEqual( activity.participantes, newParticipants)
+
+        const expectedParticipants = _.cloneDeep(activity.participantes);
+        expectedParticipants.push(username);
+        expectedParticipants.push(username2);
+        assert.deepEqual( expectedParticipants, newParticipants)
       })
     );
   });
@@ -245,7 +250,13 @@ describe('Integration tests', () => {
       .then(()    => actReq.createActivity(activityList[3], token))
       .then(()    => actReq.createActivity(activityList[4], token))
       .then((res) => actReq.searchActivities(searchParams, token))
-      .then((res) => compareActivities(res.body, expectedActivities))
+      .then((res) => {
+        const expectedActivitiesArray = res.body.map((act) => {
+          delete act.username;
+          return _.pick(act, activityFields)
+        });
+        compareActivities(expectedActivities, expectedActivitiesArray)
+      })
   });
 });
 
