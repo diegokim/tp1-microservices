@@ -1,34 +1,58 @@
 const request = require('superagent');
 const baseUrl = 'http://localhost:8080'; // VARIABLE DE CONF
 
-const name = 'admin';
-const username = 'superadmin';
-const email = 'admin@gmail.com';
-const password = 'admin';
-const nacimiento = '10/10/1990'
-const newUser = {
-  name,
-  username,
-  email,
-  password,
-  nacimiento
+const superAdmin = {
+  name: 'admin',
+  username: 'superadmin',
+  email:  'admin@gmail.com',
+  password: 'admin',
+  nacimiento: '10/10/1990'
 };
 
-let token;
+const juanma = {
+  name: 'juanma',
+  username: 'juanma',
+  email: 'juanmafc25@gmail.com',
+  password: '12345',
+  nacimiento: '10/10/1990'
+};
+
+const diego = {
+  name: 'diego',
+  username: 'diegoo',
+  email: 'diego@gmail.com',
+  password: '12345',
+  nacimiento: '10/10/1990'
+};
+
+let tokenJuanma;
+let tokenSuperAdmin;
+let tokenDiego;
 
 module.exports.startMocking = function (database) {
   setTimeout(() => {  // ESTO ES UNA COCHINADA
     database.drop()
-      .then(() => registerRequest(newUser))
-      .then((res) => (token = res.body.token))
+      .then(() => registerRequest(superAdmin))
+      .then((res) => (tokenSuperAdmin = res.body.token))
       .then(() => {
         const promises = [];
         for (const activity of activities) {
-          promises.push(createActivity(activity, token))
+          promises.push(createActivity(activity, tokenSuperAdmin))
         }
         return Promise.all(promises);
       })
-  }, 2000);
+      .then(() => registerRequest(juanma))
+      .then((res) => (tokenJuanma = res.body.token))
+      .then(() => {
+        const promises = [];
+        for (const activity of activitiesJuanma) {
+          promises.push(createActivity(activity, tokenJuanma))
+        }
+        return Promise.all(promises);
+      })
+      .then(() => registerRequest(diego))
+      .then((res) => (tokenDiego = res.body.token))
+  }, 5000);
 }
 
 const registerRequest = (regUser) => Promise.resolve(
@@ -43,9 +67,7 @@ const createActivity = (activity, token) => Promise.resolve(
     .set({'Authorization': token})
     .send(activity)
 );
-
-const activities = [
-  // ACTIVIDADES FUTBOL
+const activities = [ // ACTIVIDADES FUTBOL
   {
     nombre: 'Partido de Futbol',
 	  descripcion: 'partido de futbol con amigos',
@@ -55,8 +77,8 @@ const activities = [
     horaFin: '13:00',
     categorias: ['futbol', 'pelota'],
     prioridad: 'alta',
-    participantes: ['diego', 'juanma', 'lautaro', 'hugo'],
-    recordatorio: 'minguno',
+    participantes: [],
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'lujan',
@@ -79,7 +101,7 @@ const activities = [
     categorias: ['futbol', 'partido', 'racing'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Avellaneda',
@@ -102,7 +124,7 @@ const activities = [
     categorias: ['futbol', 'partido', 'racing', 'godoy cruz'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Avellaneda',
@@ -111,29 +133,6 @@ const activities = [
     beneficios: [{
 		  precio: 300,
 		  descuento: 20,
-		  descripcion: 'descuento'
-	  }],
-    completada: false
-  },
-  {
-    nombre: 'Clases de futbol 11',
-	  descripcion: 'Clases para divertirse con amigos',
-    fechaInicio: '14/8/2017',
-    horaInicio: '10:00',
-    fechaFin: '20/12/2017',
-    horaFin: '12:00',
-    categorias: ['futbol', 'clases', 'partido', 'gol'],
-    prioridad: 'alta',
-    participantes: [],
-    recordatorio: 'ninguno',
-    periodicidad: 1,
-    estimacion: 3,
-    lugar: 'Quilmes',
-    foto: 'foto en base 64',
-    tipo: 'publica',
-    beneficios: [{
-		  precio: 600,
-		  descuento: 10,
 		  descripcion: 'descuento'
 	  }],
     completada: false
@@ -150,7 +149,7 @@ const activities = [
     categorias: ['trabajo', 'desempleo'],
     prioridad: 'baja',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Capital Federal',
@@ -173,7 +172,7 @@ const activities = [
     categorias: ['trabajo', 'ingeniero', 'buen sueldo'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Chicago 960. La Plata',
@@ -196,7 +195,7 @@ const activities = [
     categorias: ['trabajo', 'hijos', 'cuidar'],
     prioridad: 'baja',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 12,
     estimacion: 3,
     lugar: 'Basualdo 345',
@@ -221,7 +220,7 @@ const activities = [
     categorias: ['fiesta', 'locula', 'beer'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Palermo. Osvaldo 940',
@@ -244,7 +243,7 @@ const activities = [
     categorias: ['fiesta', 'tragos', 'gratis'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Palermo. Osvaldo 940',
@@ -267,7 +266,7 @@ const activities = [
     categorias: ['fiesta', 'niños', 'infantiles'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
+    recordatorio: '',
     periodicidad: 1,
     estimacion: 3,
     lugar: 'Lanus. Sarmiento 450',
@@ -279,99 +278,181 @@ const activities = [
 		  descripcion: 'descuento apreciado'
 	  }],
     completada: false
-  },
-  {
-    nombre: 'Google Event',
-	  descripcion: 'Evento de google en puerto madero',
-    fechaInicio: '20/8/2017',
-    horaInicio: '10:00',
-    fechaFin: '20/8/2017',
-    horaFin: '16:00',
-    categorias: ['evento', 'google', 'pmadero'],
-    prioridad: 'alta',
-    participantes: [],
-    recordatorio: 'ninguno',
-    periodicidad: 1,
-    estimacion: 3,
-    lugar: 'Juana manso 332',
-    foto: 'foto en base 64',
-    tipo: 'publica',
-    beneficios: [{
-		  precio: 1000,
-		  descuento: 20,
-		  descripcion: 'descuento apreciado'
-	  }],
-    completada: false
-  },
+  }
+]
 
-    // ACTIVIDADES COMPRA
+
+const activitiesJuanma = [
   {
-    nombre: 'Zapatillas Nike',
-	  descripcion: 'Venta de zapatillas en caballito',
-    fechaInicio: '12/10/2017',
-    horaInicio: '10:00',
-    fechaFin: '12/12/2017',
-    horaFin: '20:00',
-    categorias: ['venta', 'zapatillas'],
+    nombre: 'Regar las plantas',
+	  descripcion: '   ',
+    fechaInicio: '10/7/1900',
+    horaInicio: '12:00',
+    fechaFin: '10/7/1900',
+    horaFin: '13:00',
+    categorias: ['4_Hogar'],
     prioridad: 'alta',
     participantes: [],
-    recordatorio: 'ninguno',
-    periodicidad: 1,
+    recordatorio: 'minguno',
+    periodicidad: 0,
     estimacion: 3,
-    lugar: 'Caballito. AV la Plata 940',
+    lugar: 'lujan',
     foto: 'foto en base 64',
     tipo: 'publica',
-    beneficios: [{
-		  precio: 400,
-		  descuento: 5,
-		  descripcion: 'hiper descuento'
-	  }],
+    beneficios: [],
     completada: false
   },
   {
-    nombre: 'Venta Perfumes',
-	  descripcion: 'Perfumes importados',
-    fechaInicio: '05/7/2017',
-    horaInicio: '04:00',
-    fechaFin: '16/7/2017',
-    horaFin: '17:00',
-    categorias: ['perfumes', 'compra', 'venta'],
+    nombre: 'Informe',
+	  descripcion: '   ',
+    fechaInicio: '10/7/1900',
+    horaInicio: '12:00',
+    fechaFin: '10/7/1900',
+    horaFin: '13:00',
+    categorias: ['6_Trabajo'],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'minguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'lujan',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
+    completada: false
+  },
+  //ACTIVIDADES 1 A 7
+  {
+    nombre: 'Actividad 1',
+	  descripcion: 'Descripcion 1',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
     prioridad: 'alta',
     participantes: [],
     recordatorio: 'ninguno',
-    periodicidad: 1,
+    periodicidad: 0,
     estimacion: 3,
-    lugar: 'Conurbano',
+    lugar: 'Lanus. Sarmiento 450',
     foto: 'foto en base 64',
     tipo: 'publica',
-    beneficios: [{
-		  precio: 200,
-		  descuento: 10,
-		  descripcion: 'hiper descuento'
-	  }],
+    beneficios: [],
     completada: false
   },
   {
-    nombre: 'Compra de indumentaria',
-	  descripcion: 'Compra de indumentario ML',
-    fechaInicio: '14/7/2017',
+    nombre: 'Actividad 2',
+	  descripcion: 'Descripcion 2',
+    fechaInicio: '14/7/1900',
     horaInicio: '10:00',
-    fechaFin: '30/9/2017',
+    fechaFin: '30/9/1900',
     horaFin: '20:00',
-    categorias: ['ml', 'mercado libre', 'indumentaria'],
+    categorias: [],
     prioridad: 'alta',
     participantes: [],
     recordatorio: 'ninguno',
-    periodicidad: 1,
+    periodicidad: 0,
     estimacion: 3,
-    lugar: 'Palermo. Cabildo 220',
+    lugar: 'Lanus. Sarmiento 450',
     foto: 'foto en base 64',
     tipo: 'publica',
-    beneficios: [{
-		  precio: 350,
-		  descuento: 10,
-		  descripcion: 'descuento'
-	  }],
+    beneficios: [],
+    completada: false
+  },
+  {
+    nombre: 'Actividad 3',
+	  descripcion: 'Descripcion 3',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'Lanus. Sarmiento 450',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
+    completada: false
+  },
+  {
+    nombre: 'Actividad 4',
+	  descripcion: 'Descripcion 4',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'Lanus. Sarmiento 450',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
+    completada: false
+  },
+  {
+    nombre: 'Actividad 5',
+	  descripcion: 'Descripcion 5',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'Lanus. Sarmiento 450',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
+    completada: false
+  },
+  {
+    nombre: 'Actividad 6',
+	  descripcion: 'Descripcion 6',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'Lanus. Sarmiento 450',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
+    completada: false
+  },
+  {
+    nombre: 'Actividad 7',
+	  descripcion: 'Descripcion 7',
+    fechaInicio: '14/7/1900',
+    horaInicio: '10:00',
+    fechaFin: '30/9/1900',
+    horaFin: '20:00',
+    categorias: [],
+    prioridad: 'alta',
+    participantes: [],
+    recordatorio: 'ninguno',
+    periodicidad: 0,
+    estimacion: 3,
+    lugar: 'Lanus. Sarmiento 450',
+    foto: 'foto en base 64',
+    tipo: 'publica',
+    beneficios: [],
     completada: false
   }
 ]
