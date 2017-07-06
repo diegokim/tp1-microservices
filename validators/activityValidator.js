@@ -1,19 +1,19 @@
 module.exports.isValidActivity = (activity) => (
-  activity.nombre &&
-  activity.descripcion &&
-  activity.fechaInicio &&
-  activity.horaInicio &&
-  activity.fechaFin &&
-  activity.horaFin &&
-  activity.categorias &&
-  activity.prioridad &&
-  activity.participantes &&
-  activity.recordatorio &&
-  activity.periodicidad &&
-  activity.estimacion &&
-  activity.foto &&
-  activity.tipo &&
-  activity.beneficios &&
+  (activity.nombre !== null) &&
+  (activity.descripcion !== null) &&
+  (activity.fechaInicio !== null) &&
+  (activity.horaInicio !== null) &&
+  (activity.fechaFin !== null) &&
+  (activity.horaFin !== null) &&
+  (activity.categorias !== null) &&
+  (activity.prioridad !== null) &&
+  (activity.participantes !== null) &&
+  (activity.recordatorio !== null) &&
+  (activity.periodicidad !== null) &&
+  (activity.estimacion !== null) &&
+  (activity.foto !== null) &&
+  (activity.tipo !== null) &&
+  (activity.beneficios !== null) &&
   (activity.completada !== null)
 );
 

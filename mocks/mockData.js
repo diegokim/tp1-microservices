@@ -5,7 +5,7 @@ const superAdmin = {
   name: 'admin',
   username: 'superadmin',
   email:  'admin@gmail.com',
-  password: 'admin',
+  password: '12345',
   nacimiento: '10/10/1990'
 };
 
@@ -19,7 +19,7 @@ const juanma = {
 
 const diego = {
   name: 'diego',
-  username: 'diegoo',
+  username: 'diego',
   email: 'diego@gmail.com',
   password: '12345',
   nacimiento: '10/10/1990'
